@@ -89,6 +89,8 @@ function portalLayout({ name, email, role, content, tabs = "" }) {
 }
 
 let adminDonations = [];
+let adminDonationStatus = "pending";
+let adminRequestId = 0;
 
 const pages = {
   "/login-cuenta": () => layout(`
@@ -257,26 +259,28 @@ const pages = {
       name: "Administrador",
       email: user.email,
       role: "admin",
-      tabs: `<nav class="portal-tabs" aria-label="Navegación de administración"><span class="portal-tab active">${icons.box} Donaciones</span></nav>`,
+      tabs: `
+        <nav class="portal-tabs" aria-label="Cola de donaciones">
+          <button class="portal-tab ${adminDonationStatus === "pending" ? "active" : ""}" type="button" data-admin-status="pending">${icons.box} En cola</button>
+          <button class="portal-tab ${adminDonationStatus === "sent" ? "active" : ""}" type="button" data-admin-status="sent">Enviadas</button>
+        </nav>
+      `,
       content: `
         <section class="portal-intro admin-intro">
           <p class="eyebrow">Panel de administración</p>
-          <h1>Donaciones recibidas</h1>
-          <p>Consulta las donaciones de la comunidad y la información de contacto de cada persona.</p>
+          <h1>${adminDonationStatus === "pending" ? "Cola prioritaria" : "Historial de enviadas"}</h1>
+          <p>${adminDonationStatus === "pending" ? "Atiende primero las donaciones con prioridad más alta. Si empatan, se muestra primero la más antigua." : "Consulta las donaciones que ya fueron marcadas como enviadas."}</p>
         </section>
         <section class="admin-summary" aria-label="Resumen de donaciones">
-          <div class="summary-card"><span>Total de donaciones</span><strong data-total-count>—</strong></div>
+          <div class="summary-card"><span>${adminDonationStatus === "pending" ? "Donaciones en cola" : "Donaciones enviadas"}</span><strong data-total-count>—</strong></div>
           <div class="summary-card"><span>Albergues apoyados</span><strong data-shelter-count>—</strong></div>
           <button class="refresh-button" type="button" data-action="refresh">${icons.refresh} Actualizar</button>
         </section>
         <section class="donations-panel">
           <div class="donations-toolbar">
-            <div class="filter-tabs" role="tablist" aria-label="Filtrar donaciones">
-              <button class="filter-tab active" type="button" role="tab" aria-selected="true" data-admin-filter="all">Todas</button>
-              <button class="filter-tab" type="button" role="tab" aria-selected="false" data-admin-filter="recent">Últimos 7 días</button>
-            </div>
             <span class="result-count" data-result-count></span>
           </div>
+          <p class="form-notice admin-notice" data-admin-notice role="status" aria-live="polite" hidden></p>
           <div class="donation-list" data-donation-list aria-live="polite">
             <div class="empty-state"><span class="loading-dot"></span> Cargando donaciones...</div>
           </div>
@@ -336,6 +340,17 @@ app.addEventListener("click", (event) => {
     loadAdminDonations();
     return;
   }
+  const sendButton = event.target.closest("[data-send-donation]");
+  if (sendButton) {
+    markDonationSent(sendButton);
+    return;
+  }
+  const statusTab = event.target.closest("[data-admin-status]");
+  if (statusTab && statusTab.dataset.adminStatus !== adminDonationStatus) {
+    adminDonationStatus = statusTab.dataset.adminStatus;
+    render();
+    return;
+  }
   const filterButton = event.target.closest("[data-admin-filter]");
   if (filterButton) {
     app.querySelectorAll("[data-admin-filter]").forEach((button) => {
@@ -355,16 +370,17 @@ app.addEventListener("click", (event) => {
   navigate(link.dataset.route);
 });
 
-async function sendApiRequest(path, { method = "POST", values, token } = {}) {
+async function sendApiRequest(path, { method = "POST", values, token, query } = {}) {
   const baseUrl = window.APP_CONFIG?.apiBaseUrl?.replace(/\/+$/, "");
   if (!baseUrl) {
     throw new Error("Falta configurar la dirección de la API en config.js.");
   }
 
+  const queryString = query ? `?${new URLSearchParams(query)}` : "";
   const headers = {};
   if (values) headers["Content-Type"] = "application/json";
   if (token) headers.Authorization = `Bearer ${token}`;
-  const response = await fetch(`${baseUrl}${path}`, {
+  const response = await fetch(`${baseUrl}${path}${queryString}`, {
     method,
     headers,
     ...(values ? { body: JSON.stringify(values) } : {}),
@@ -460,13 +476,21 @@ app.addEventListener("submit", async (event) => {
 async function loadAdminDonations() {
   const list = app.querySelector("[data-donation-list]");
   if (!list) return;
+  const requestId = ++adminRequestId;
+  const requestedStatus = adminDonationStatus;
   const token = sessionStorage.getItem("manos_cerca_access_token");
   list.innerHTML = `<div class="empty-state"><span class="loading-dot"></span> Actualizando donaciones...</div>`;
   try {
     const result = await sendApiRequest("/api/admin/donations", {
       method: "GET",
       token,
+      query: { status: requestedStatus },
     });
+    if (
+      requestId !== adminRequestId
+      || currentRoute() !== "/admin-donaciones"
+      || adminDonationStatus !== requestedStatus
+    ) return;
     if (!Array.isArray(result.donations)) {
       throw new Error("La API no devolvió una lista de donaciones válida.");
     }
@@ -476,9 +500,13 @@ async function loadAdminDonations() {
     ).size;
     app.querySelector("[data-total-count]").textContent = String(adminDonations.length);
     app.querySelector("[data-shelter-count]").textContent = String(shelterCount);
-    const activeFilter = app.querySelector("[data-admin-filter].active")?.dataset.adminFilter || "all";
-    renderAdminDonations(activeFilter);
+    renderAdminDonations();
   } catch (error) {
+    if (
+      requestId !== adminRequestId
+      || currentRoute() !== "/admin-donaciones"
+      || adminDonationStatus !== requestedStatus
+    ) return;
     const message = error instanceof TypeError
       ? "No se pudo conectar con la API. Verifica su URL, que esté activa y que permita el origen de esta página."
       : error.message;
@@ -486,18 +514,34 @@ async function loadAdminDonations() {
   }
 }
 
-function renderAdminDonations(filter) {
+async function markDonationSent(button) {
+  const donationId = button.dataset.sendDonation;
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "Enviando...";
+  try {
+    await sendApiRequest(`/api/admin/donations/${encodeURIComponent(donationId)}/send`, {
+      token: sessionStorage.getItem("manos_cerca_access_token"),
+    });
+    await loadAdminDonations();
+  } catch (error) {
+    button.disabled = false;
+    button.textContent = originalText;
+    const notice = app.querySelector("[data-admin-notice]");
+    if (notice) showNotice(notice, error.message);
+  }
+}
+
+function renderAdminDonations() {
   const list = app.querySelector("[data-donation-list]");
   if (!list) return;
-  const now = Date.now();
-  const visibleDonations = filter === "recent"
-    ? adminDonations.filter((donation) => now - Date.parse(donation.created_at) <= 7 * 24 * 60 * 60 * 1000)
-    : adminDonations;
+  const visibleDonations = adminDonations;
+  const countLabel = adminDonationStatus === "pending" ? "en cola" : "enviada";
   app.querySelector("[data-result-count]").textContent =
-    `${visibleDonations.length} ${visibleDonations.length === 1 ? "donación" : "donaciones"}`;
+    `${visibleDonations.length} ${visibleDonations.length === 1 ? `donación ${countLabel}` : `donaciones ${countLabel === "enviada" ? "enviadas" : countLabel}`}`;
 
   if (visibleDonations.length === 0) {
-    list.innerHTML = `<div class="empty-state">${filter === "recent" ? "No hay donaciones en los últimos 7 días." : "Todavía no se han registrado donaciones."}</div>`;
+    list.innerHTML = `<div class="empty-state">${adminDonationStatus === "pending" ? "La cola está vacía. No hay donaciones pendientes." : "Todavía no hay donaciones enviadas."}</div>`;
     return;
   }
 
@@ -520,6 +564,9 @@ function renderAdminDonations(filter) {
           <p class="donation-shelter">${escapeHtml(donation.shelter_name)}</p>
           <p class="donation-message">${escapeHtml(donation.message)}</p>
           <div class="donor-info"><span>${escapeHtml(donation.user?.name || "Usuario")}</span><span>${escapeHtml(donation.user?.email || "")}</span></div>
+          ${adminDonationStatus === "pending"
+            ? `<button class="send-donation-button" type="button" data-send-donation="${escapeHtml(donation.id)}">${icons.check} Enviar</button>`
+            : `<p class="sent-status">${icons.check} Enviada${donation.sent_at ? ` el ${escapeHtml(new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short" }).format(new Date(donation.sent_at)))}` : ""}</p>`}
         </div>
       </article>
     `;

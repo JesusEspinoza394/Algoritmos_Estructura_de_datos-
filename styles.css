@@ -495,8 +495,13 @@ a {
   align-items: center;
   gap: 8px;
   padding: 0 15px;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
   border-bottom: 2px solid transparent;
   color: var(--muted);
+  background: transparent;
+  cursor: pointer;
   font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
@@ -856,6 +861,55 @@ a {
 .donor-info span:first-child {
   color: var(--ink);
   font-weight: 700;
+}
+
+.send-donation-button {
+  display: inline-flex;
+  min-height: 35px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 0 12px;
+  border: 1px solid #cce2d3;
+  border-radius: 8px;
+  color: var(--green-dark);
+  background: #edf6f0;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+}
+
+.send-donation-button:hover {
+  border-color: var(--green);
+  color: white;
+  background: var(--green);
+}
+
+.send-donation-button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.send-donation-button svg,
+.sent-status svg {
+  width: 15px;
+  height: 15px;
+}
+
+.sent-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 14px 0 0;
+  color: var(--green-dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-notice {
+  margin: 0 0 15px;
 }
 
 .empty-state {
