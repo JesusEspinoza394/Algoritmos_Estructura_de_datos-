@@ -87,7 +87,7 @@ const pages = {
       <button class="submit-button" type="submit">Iniciar sesión ${icons.enter}</button>
     </form>
     <p class="register-prompt">¿No tienes cuenta? <a class="inline-link" href="/registrame-usuario" data-route="/registrame-usuario">Registrarme</a></p>
-    <p class="form-notice" data-notice hidden></p>
+    <p class="form-notice" data-notice role="status" aria-live="polite" hidden></p>
   `),
 
   "/registrame-usuario": () => layout(`
@@ -117,7 +117,7 @@ const pages = {
       <button class="submit-button" type="submit">Crear mi cuenta ${icons.enter}</button>
     </form>
     <p class="register-prompt">¿Ya tienes cuenta? <a class="inline-link" href="/login-usuario" data-route="/login-usuario">Inicia sesión</a></p>
-    <p class="form-notice" data-notice hidden></p>
+    <p class="form-notice" data-notice role="status" aria-live="polite" hidden></p>
   `),
 
   "/login-admin": () => layout(`
@@ -137,7 +137,7 @@ const pages = {
       </div>
       <button class="submit-button" type="submit">Iniciar sesión ${icons.enter}</button>
     </form>
-    <p class="form-notice" data-notice hidden></p>
+    <p class="form-notice" data-notice role="status" aria-live="polite" hidden></p>
   `),
 };
 
@@ -170,14 +170,94 @@ app.addEventListener("click", (event) => {
   navigate(link.dataset.route);
 });
 
-app.addEventListener("submit", (event) => {
+async function sendApiRequest(path, values) {
+  const baseUrl = window.APP_CONFIG?.apiBaseUrl?.replace(/\/+$/, "");
+  if (!baseUrl) {
+    throw new Error("Falta configurar la dirección de la API en config.js.");
+  }
+
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(values),
+  });
+
+  let result;
+  try {
+    result = await response.json();
+  } catch {
+    throw new Error("La API respondió con un formato inesperado.");
+  }
+
+  if (!response.ok) {
+    throw new Error(result.error || result.message || `Error de la API (${response.status}).`);
+  }
+  return result;
+}
+
+function showNotice(notice, message) {
+  notice.hidden = false;
+  notice.textContent = message;
+}
+
+app.addEventListener("submit", async (event) => {
   const form = event.target.closest("[data-form]");
   if (!form) return;
 
   event.preventDefault();
   const notice = app.querySelector("[data-notice]");
-  notice.hidden = false;
-  notice.textContent = "Este diseño es una maqueta visual. El formulario todavía no está conectado a la API.";
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalButtonContent = submitButton.innerHTML;
+  const values = Object.fromEntries(new FormData(form).entries());
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Conectando...";
+  form.setAttribute("aria-busy", "true");
+  notice.hidden = true;
+
+  try {
+    if (form.dataset.form === "user-register") {
+      const result = await sendApiRequest("/api/auth/register", {
+        name: values.name,
+        email: values.email,
+        age: Number(values.age),
+        password: values.password,
+      });
+      showNotice(
+        notice,
+        `${result.message || "Registro completado."} Ya puedes iniciar sesión con tu cuenta.`,
+      );
+      form.reset();
+      return;
+    }
+
+    const isAdmin = form.dataset.form === "admin-login";
+    const result = await sendApiRequest(
+      isAdmin ? "/api/admin/login" : "/api/auth/login",
+      isAdmin
+        ? { username: values.email, password: values.password }
+        : { email: values.email, password: values.password },
+    );
+    if (typeof result.access_token !== "string" || !result.access_token) {
+      throw new Error("La API no devolvió el token de acceso esperado.");
+    }
+
+    sessionStorage.setItem("manos_cerca_access_token", result.access_token);
+    sessionStorage.setItem("manos_cerca_role", isAdmin ? "admin" : "user");
+    const greeting = isAdmin
+      ? "Inicio de sesión de administrador correcto."
+      : `Inicio de sesión correcto. Bienvenido${result.user?.name ? `, ${result.user.name}` : ""}.`;
+    showNotice(notice, `${greeting} La sesión queda guardada en esta pestaña.`);
+  } catch (error) {
+    const message = error instanceof TypeError
+      ? "No se pudo conectar con la API. Verifica su URL, que esté activa y que permita el origen de esta página."
+      : error.message;
+    showNotice(notice, message);
+  } finally {
+    submitButton.disabled = false;
+    submitButton.innerHTML = originalButtonContent;
+    form.removeAttribute("aria-busy");
+  }
 });
 
 window.addEventListener("popstate", render);
