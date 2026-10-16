@@ -269,7 +269,7 @@ const pages = {
         <section class="portal-intro admin-intro">
           <p class="eyebrow">Panel de administración</p>
           <h1>${adminDonationStatus === "pending" ? "Cola prioritaria" : "Historial de enviadas"}</h1>
-          <p>${adminDonationStatus === "pending" ? "Atiende primero las donaciones con prioridad más alta. Si empatan, se muestra primero la más antigua." : "Consulta las donaciones que ya fueron marcadas como enviadas."}</p>
+          <p>${adminDonationStatus === "pending" ? "La cola muestra primero el número de prioridad más alto. Si empatan, se muestra primero la donación más antigua." : "Consulta las donaciones que ya fueron marcadas como enviadas."}</p>
         </section>
         <section class="admin-summary" aria-label="Resumen de donaciones">
           <div class="summary-card"><span>${adminDonationStatus === "pending" ? "Donaciones en cola" : "Donaciones enviadas"}</span><strong data-total-count>—</strong></div>
