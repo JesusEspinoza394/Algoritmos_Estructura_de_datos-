@@ -9,6 +9,9 @@ APP_ROUTES = {
     "/login-usuario",
     "/registrame-usuario",
     "/login-admin",
+    "/formulario-donacion-usuario",
+    "/gracias-por-donar",
+    "/admin-donaciones",
 }
 
 

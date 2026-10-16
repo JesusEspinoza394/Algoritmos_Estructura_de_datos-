@@ -18,6 +18,9 @@ Abre `http://127.0.0.1:8000/login-cuenta` en el navegador. El servidor local per
 - `/login-usuario`: inicio de sesión de usuario con correo y contraseña.
 - `/registrame-usuario`: registro con nombre, correo, edad y contraseña.
 - `/login-admin`: inicio de sesión de administrador con correo y contraseña.
+- `/formulario-donacion-usuario`: formulario protegido para registrar una donación.
+- `/gracias-por-donar`: confirmación de una donación guardada.
+- `/admin-donaciones`: listado protegido de donaciones para administración.
 
 ## Conexión con la API y Neon
 
@@ -35,6 +38,8 @@ Si la API tiene otro dominio, cambia esa URL. Para probar con una API Flask ejec
 
 Configura `FRONTEND_ORIGINS` en el servicio de la API en Render con el origen exacto desde el que se sirve esta página, incluyendo `https://` y sin una ruta final; por ejemplo, `https://mi-interfaz.onrender.com`. Para permitir el origen publicado y la prueba local, sepáralos con una coma. Después de cambiar esta variable, vuelve a desplegar la API.
 
-La pantalla de administrador solicita correo electrónico, pero la ruta actual de la API compara ese valor con `ADMIN_USERNAME`. Por ello, configura `ADMIN_USERNAME` en Render con el mismo correo que se escribirá en el formulario.
+La pantalla de administrador solicita correo electrónico, pero la ruta de la API compara ese valor con `ADMIN_USERNAME`. Configura `ADMIN_USERNAME` en Render con el mismo correo que se escribirá en el formulario.
 
-El registro escribe usuarios en la base de Neon y el inicio de sesión consulta esas cuentas. Los tokens de acceso se guardan en `sessionStorage` y solo duran mientras exista la sesión del navegador. El diseño todavía no incluye un panel de usuario o de administración. No agregues contraseñas, `DATABASE_URL` ni claves secretas a `config.js`.
+El registro escribe usuarios en la base de Neon y devuelve un token de acceso; el inicio de sesión consulta esas cuentas. Tras autenticarse, la interfaz lleva al formulario de donación. Las donaciones se guardan en Neon y se muestran en el panel protegido del administrador. Los tokens se guardan en `sessionStorage` y solo duran mientras exista la sesión de esa pestaña.
+
+No agregues contraseñas, `DATABASE_URL` ni claves secretas a `config.js`.

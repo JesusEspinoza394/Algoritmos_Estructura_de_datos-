@@ -8,6 +8,10 @@ const icons = {
   back: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 18-6-6 6-6M9 12h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   enter: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 17l5-5-5-5m5 5H3m9-9h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   community: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m16 0v-2a4 4 0 0 0-3-3.87M14 3.13a4 4 0 0 1 0 7.75M10 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" transform="translate(2 0)" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  logout: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 17l5-5-5-5m5 5H3m9-9h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  box: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 5v8l9 5 9-5V8m-9 5v8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  refresh: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5m-3.5-3A7 7 0 0 1 17 6l3 6M4 12l3 6a7 7 0 0 0 11.5-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
 };
 
 const brand = (className = "brand") => `
@@ -42,6 +46,49 @@ const layout = (content) => `
     </div>
   </section>
 `;
+
+const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#39;",
+}[character]));
+
+function getSavedUser() {
+  try {
+    return JSON.parse(sessionStorage.getItem("manos_cerca_user") || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function portalLayout({ name, email, role, content, tabs = "" }) {
+  const initial = (name || email || "U").trim().charAt(0).toUpperCase();
+  return `
+    <section class="portal-shell">
+      <header class="portal-header">
+        <div class="portal-header-main">
+          ${brand("brand portal-brand")}
+          ${tabs}
+        </div>
+        <div class="account-menu">
+          <span class="account-avatar" aria-hidden="true">${escapeHtml(initial)}</span>
+          <span class="account-info">
+            <strong>${escapeHtml(name || (role === "admin" ? "Administrador" : "Usuario"))}</strong>
+            <span>${escapeHtml(email || "")}</span>
+          </span>
+          <button class="logout-button" type="button" data-action="logout">
+            ${icons.logout}<span>Cerrar sesión</span>
+          </button>
+        </div>
+      </header>
+      <section class="portal-content">${content}</section>
+    </section>
+  `;
+}
+
+let adminDonations = [];
 
 const pages = {
   "/login-cuenta": () => layout(`
@@ -139,6 +186,104 @@ const pages = {
     </form>
     <p class="form-notice" data-notice role="status" aria-live="polite" hidden></p>
   `),
+
+  "/formulario-donacion-usuario": () => {
+    const user = getSavedUser();
+    return portalLayout({
+      name: user.name,
+      email: user.email,
+      role: "user",
+      tabs: `<nav class="portal-tabs" aria-label="Navegación de usuario"><span class="portal-tab active">${icons.box} Nueva donación</span></nav>`,
+      content: `
+        <section class="portal-intro">
+          <p class="eyebrow">Tu generosidad llega más lejos</p>
+          <h1>Comparte algo bueno.</h1>
+          <p>Cuéntanos qué deseas donar y a qué albergue te gustaría apoyar.</p>
+        </section>
+        <section class="donation-card">
+          <div class="card-heading">
+            <span class="role-icon">${icons.box}</span>
+            <div><h2>Tu donación</h2><p>Completa los datos para que podamos coordinarla.</p></div>
+          </div>
+          <form class="form-fields donation-fields" data-form="donation">
+            <div class="field">
+              <label for="donation-type">Tipo de objeto a donar</label>
+              <select id="donation-type" name="object_type" required>
+                <option value="" selected disabled>Selecciona una categoría</option>
+                <option>Alimentos</option>
+                <option>Ropa y calzado</option>
+                <option>Higiene personal</option>
+                <option>Útiles escolares</option>
+                <option>Juguetes</option>
+                <option>Otro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="shelter-name">Nombre del albergue</label>
+              <input id="shelter-name" name="shelter_name" type="text" maxlength="160" placeholder="¿A qué albergue deseas ayudar?" required>
+            </div>
+            <div class="field">
+              <label for="donation-message">Mensaje</label>
+              <textarea id="donation-message" name="message" rows="5" maxlength="2000" placeholder="Cuéntanos algo sobre tu donación..." required></textarea>
+              <p class="field-hint">Máximo 2000 caracteres.</p>
+            </div>
+            <button class="submit-button" type="submit">Enviar donación ${icons.enter}</button>
+          </form>
+          <p class="form-notice" data-notice role="status" aria-live="polite" hidden></p>
+        </section>
+      `,
+    });
+  },
+
+  "/gracias-por-donar": () => {
+    const user = getSavedUser();
+    return `
+      <section class="thanks-screen">
+        <div class="thanks-card">
+          <span class="thanks-icon">${icons.check}</span>
+          <p class="eyebrow">Un gesto que transforma</p>
+          <h1>¡Gracias por donar${user.name ? `, ${escapeHtml(user.name.split(" ")[0])}` : ""}!</h1>
+          <p>Tu generosidad ya está registrada. Gracias por acercar apoyo a quienes más lo necesitan.</p>
+          <a class="submit-button thanks-action" href="/formulario-donacion-usuario" data-route="/formulario-donacion-usuario">Hacer otra donación</a>
+          <button class="text-button" type="button" data-action="logout">Cerrar sesión</button>
+        </div>
+      </section>
+    `;
+  },
+
+  "/admin-donaciones": () => {
+    const user = getSavedUser();
+    return portalLayout({
+      name: "Administrador",
+      email: user.email,
+      role: "admin",
+      tabs: `<nav class="portal-tabs" aria-label="Navegación de administración"><span class="portal-tab active">${icons.box} Donaciones</span></nav>`,
+      content: `
+        <section class="portal-intro admin-intro">
+          <p class="eyebrow">Panel de administración</p>
+          <h1>Donaciones recibidas</h1>
+          <p>Consulta las donaciones de la comunidad y la información de contacto de cada persona.</p>
+        </section>
+        <section class="admin-summary" aria-label="Resumen de donaciones">
+          <div class="summary-card"><span>Total de donaciones</span><strong data-total-count>—</strong></div>
+          <div class="summary-card"><span>Albergues apoyados</span><strong data-shelter-count>—</strong></div>
+          <button class="refresh-button" type="button" data-action="refresh">${icons.refresh} Actualizar</button>
+        </section>
+        <section class="donations-panel">
+          <div class="donations-toolbar">
+            <div class="filter-tabs" role="tablist" aria-label="Filtrar donaciones">
+              <button class="filter-tab active" type="button" role="tab" aria-selected="true" data-admin-filter="all">Todas</button>
+              <button class="filter-tab" type="button" role="tab" aria-selected="false" data-admin-filter="recent">Últimos 7 días</button>
+            </div>
+            <span class="result-count" data-result-count></span>
+          </div>
+          <div class="donation-list" data-donation-list aria-live="polite">
+            <div class="empty-state"><span class="loading-dot"></span> Cargando donaciones...</div>
+          </div>
+        </section>
+      `,
+    });
+  },
 };
 
 function currentRoute() {
@@ -146,12 +291,28 @@ function currentRoute() {
 }
 
 function render() {
-  const route = currentRoute();
+  let route = currentRoute();
+  const expectedRole = route === "/admin-donaciones"
+    ? "admin"
+    : ["/formulario-donacion-usuario", "/gracias-por-donar"].includes(route)
+      ? "user"
+      : null;
+  const savedRole = sessionStorage.getItem("manos_cerca_role");
+  const accessToken = sessionStorage.getItem("manos_cerca_access_token");
+  if (expectedRole && (!accessToken || savedRole !== expectedRole)) {
+    route = expectedRole === "admin" ? "/login-admin" : "/login-usuario";
+    window.history.replaceState({}, "", route);
+  }
   const page = pages[route] || pages["/login-cuenta"];
   if (!pages[route]) {
     window.history.replaceState({}, "", "/login-cuenta");
   }
+  app.classList.toggle("app-portal", route === "/formulario-donacion-usuario" || route === "/admin-donaciones");
+  app.classList.toggle("app-thanks", route === "/gracias-por-donar");
   app.innerHTML = page();
+  if (route === "/admin-donaciones") {
+    loadAdminDonations();
+  }
 }
 
 function navigate(path) {
@@ -162,6 +323,30 @@ function navigate(path) {
 }
 
 app.addEventListener("click", (event) => {
+  const action = event.target.closest("[data-action]");
+  if (action?.dataset.action === "logout") {
+    sessionStorage.removeItem("manos_cerca_access_token");
+    sessionStorage.removeItem("manos_cerca_role");
+    sessionStorage.removeItem("manos_cerca_user");
+    adminDonations = [];
+    navigate("/login-cuenta");
+    return;
+  }
+  if (action?.dataset.action === "refresh") {
+    loadAdminDonations();
+    return;
+  }
+  const filterButton = event.target.closest("[data-admin-filter]");
+  if (filterButton) {
+    app.querySelectorAll("[data-admin-filter]").forEach((button) => {
+      const active = button === filterButton;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+    renderAdminDonations(filterButton.dataset.adminFilter);
+    return;
+  }
+
   const link = event.target.closest("[data-route]");
   if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
     return;
@@ -170,29 +355,46 @@ app.addEventListener("click", (event) => {
   navigate(link.dataset.route);
 });
 
-async function sendApiRequest(path, values) {
+async function sendApiRequest(path, { method = "POST", values, token } = {}) {
   const baseUrl = window.APP_CONFIG?.apiBaseUrl?.replace(/\/+$/, "");
   if (!baseUrl) {
     throw new Error("Falta configurar la dirección de la API en config.js.");
   }
 
+  const headers = {};
+  if (values) headers["Content-Type"] = "application/json";
+  if (token) headers.Authorization = `Bearer ${token}`;
   const response = await fetch(`${baseUrl}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(values),
+    method,
+    headers,
+    ...(values ? { body: JSON.stringify(values) } : {}),
   });
 
   let result;
   try {
-    result = await response.json();
+    result = JSON.parse(await response.text());
   } catch {
-    throw new Error("La API respondió con un formato inesperado.");
+    throw new Error(
+      `La API respondió con un formato inesperado (HTTP ${response.status}). Revisa los logs del servicio backend en Render.`,
+    );
   }
 
   if (!response.ok) {
     throw new Error(result.error || result.message || `Error de la API (${response.status}).`);
   }
   return result;
+}
+
+function saveSession(result, role, email = "") {
+  if (typeof result.access_token !== "string" || !result.access_token) {
+    throw new Error("La API no devolvió el token de acceso esperado.");
+  }
+  sessionStorage.setItem("manos_cerca_access_token", result.access_token);
+  sessionStorage.setItem("manos_cerca_role", role);
+  sessionStorage.setItem(
+    "manos_cerca_user",
+    JSON.stringify(result.user || { name: "Administrador", email }),
+  );
 }
 
 function showNotice(notice, message) {
@@ -218,45 +420,143 @@ app.addEventListener("submit", async (event) => {
   try {
     if (form.dataset.form === "user-register") {
       const result = await sendApiRequest("/api/auth/register", {
-        name: values.name,
-        email: values.email,
-        age: Number(values.age),
-        password: values.password,
+        values: {
+          name: values.name,
+          email: values.email,
+          age: Number(values.age),
+          password: values.password,
+        },
       });
-      showNotice(
-        notice,
-        `${result.message || "Registro completado."} Ya puedes iniciar sesión con tu cuenta.`,
-      );
-      form.reset();
+      saveSession(result, "user", values.email);
+      navigate("/formulario-donacion-usuario");
       return;
     }
 
     const isAdmin = form.dataset.form === "admin-login";
     const result = await sendApiRequest(
       isAdmin ? "/api/admin/login" : "/api/auth/login",
-      isAdmin
-        ? { username: values.email, password: values.password }
-        : { email: values.email, password: values.password },
+      {
+        values: isAdmin
+          ? { username: values.email, password: values.password }
+          : { email: values.email, password: values.password },
+      },
     );
-    if (typeof result.access_token !== "string" || !result.access_token) {
-      throw new Error("La API no devolvió el token de acceso esperado.");
-    }
-
-    sessionStorage.setItem("manos_cerca_access_token", result.access_token);
-    sessionStorage.setItem("manos_cerca_role", isAdmin ? "admin" : "user");
-    const greeting = isAdmin
-      ? "Inicio de sesión de administrador correcto."
-      : `Inicio de sesión correcto. Bienvenido${result.user?.name ? `, ${result.user.name}` : ""}.`;
-    showNotice(notice, `${greeting} La sesión queda guardada en esta pestaña.`);
+    saveSession(result, isAdmin ? "admin" : "user", values.email);
+    navigate(isAdmin ? "/admin-donaciones" : "/formulario-donacion-usuario");
   } catch (error) {
     const message = error instanceof TypeError
       ? "No se pudo conectar con la API. Verifica su URL, que esté activa y que permita el origen de esta página."
       : error.message;
     showNotice(notice, message);
   } finally {
-    submitButton.disabled = false;
-    submitButton.innerHTML = originalButtonContent;
-    form.removeAttribute("aria-busy");
+    if (form.isConnected) {
+      submitButton.disabled = false;
+      submitButton.innerHTML = originalButtonContent;
+      form.removeAttribute("aria-busy");
+    }
+  }
+});
+
+async function loadAdminDonations() {
+  const list = app.querySelector("[data-donation-list]");
+  if (!list) return;
+  const token = sessionStorage.getItem("manos_cerca_access_token");
+  list.innerHTML = `<div class="empty-state"><span class="loading-dot"></span> Actualizando donaciones...</div>`;
+  try {
+    const result = await sendApiRequest("/api/admin/donations", {
+      method: "GET",
+      token,
+    });
+    if (!Array.isArray(result.donations)) {
+      throw new Error("La API no devolvió una lista de donaciones válida.");
+    }
+    adminDonations = result.donations;
+    const shelterCount = new Set(
+      adminDonations.map((donation) => donation.shelter_name.trim().toLocaleLowerCase()),
+    ).size;
+    app.querySelector("[data-total-count]").textContent = String(adminDonations.length);
+    app.querySelector("[data-shelter-count]").textContent = String(shelterCount);
+    const activeFilter = app.querySelector("[data-admin-filter].active")?.dataset.adminFilter || "all";
+    renderAdminDonations(activeFilter);
+  } catch (error) {
+    const message = error instanceof TypeError
+      ? "No se pudo conectar con la API. Verifica su URL, que esté activa y que permita el origen de esta página."
+      : error.message;
+    list.innerHTML = `<div class="empty-state error-state">${escapeHtml(message)}</div>`;
+  }
+}
+
+function renderAdminDonations(filter) {
+  const list = app.querySelector("[data-donation-list]");
+  if (!list) return;
+  const now = Date.now();
+  const visibleDonations = filter === "recent"
+    ? adminDonations.filter((donation) => now - Date.parse(donation.created_at) <= 7 * 24 * 60 * 60 * 1000)
+    : adminDonations;
+  app.querySelector("[data-result-count]").textContent =
+    `${visibleDonations.length} ${visibleDonations.length === 1 ? "donación" : "donaciones"}`;
+
+  if (visibleDonations.length === 0) {
+    list.innerHTML = `<div class="empty-state">${filter === "recent" ? "No hay donaciones en los últimos 7 días." : "Todavía no se han registrado donaciones."}</div>`;
+    return;
+  }
+
+  list.innerHTML = visibleDonations.map((donation) => {
+    const date = new Date(donation.created_at);
+    const dateLabel = Number.isNaN(date.getTime())
+      ? "Fecha no disponible"
+      : new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short" }).format(date);
+    return `
+      <article class="donation-item">
+        <div class="donation-item-icon">${icons.box}</div>
+        <div class="donation-item-content">
+          <div class="donation-item-heading">
+            <h3>${escapeHtml(donation.object_type)}</h3>
+            <time>${escapeHtml(dateLabel)}</time>
+          </div>
+          <p class="donation-shelter">${escapeHtml(donation.shelter_name)}</p>
+          <p class="donation-message">${escapeHtml(donation.message)}</p>
+          <div class="donor-info"><span>${escapeHtml(donation.user?.name || "Usuario")}</span><span>${escapeHtml(donation.user?.email || "")}</span></div>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+app.addEventListener("submit", async (event) => {
+  const form = event.target.closest('[data-form="donation"]');
+  if (!form) return;
+  event.preventDefault();
+  const notice = app.querySelector("[data-notice]");
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalButtonContent = submitButton.innerHTML;
+  const values = Object.fromEntries(new FormData(form).entries());
+  submitButton.disabled = true;
+  submitButton.textContent = "Enviando...";
+  form.setAttribute("aria-busy", "true");
+  notice.hidden = true;
+
+  try {
+    await sendApiRequest("/api/donations", {
+      token: sessionStorage.getItem("manos_cerca_access_token"),
+      values: {
+        object_type: values.object_type,
+        shelter_name: values.shelter_name,
+        message: values.message,
+      },
+    });
+    navigate("/gracias-por-donar");
+  } catch (error) {
+    const message = error instanceof TypeError
+      ? "No se pudo conectar con la API. Verifica su URL y la configuración CORS de Render."
+      : error.message;
+    showNotice(notice, message);
+  } finally {
+    if (form.isConnected) {
+      submitButton.disabled = false;
+      submitButton.innerHTML = originalButtonContent;
+      form.removeAttribute("aria-busy");
+    }
   }
 });
 
