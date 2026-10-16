@@ -42,4 +42,6 @@ La pantalla de administrador solicita correo electrónico, pero la ruta de la AP
 
 El registro escribe usuarios en la base de Neon y devuelve un token de acceso; el inicio de sesión consulta esas cuentas. Tras autenticarse, la interfaz lleva al formulario de donación. Las donaciones se guardan en Neon y se muestran en el panel protegido del administrador. Los tokens se guardan en `sessionStorage` y solo duran mientras exista la sesión de esa pestaña.
 
+La prioridad se asigna por la API, no por el navegador: juguetes, útiles escolares y otro reciben 1; higiene personal, 2; ropa y calzado, 3; alimentos, 4. No se muestra en el formulario ni en la confirmación del donante; el panel administrador muestra el nivel y ordena primero las donaciones con prioridad 1.
+
 No agregues contraseñas, `DATABASE_URL` ni claves secretas a `config.js`.

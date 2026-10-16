@@ -404,7 +404,7 @@ function showNotice(notice, message) {
 
 app.addEventListener("submit", async (event) => {
   const form = event.target.closest("[data-form]");
-  if (!form) return;
+  if (!form || form.dataset.form === "donation") return;
 
   event.preventDefault();
   const notice = app.querySelector("[data-notice]");
@@ -512,7 +512,10 @@ function renderAdminDonations(filter) {
         <div class="donation-item-content">
           <div class="donation-item-heading">
             <h3>${escapeHtml(donation.object_type)}</h3>
-            <time>${escapeHtml(dateLabel)}</time>
+            <div class="donation-item-meta">
+              <span class="priority-badge priority-${escapeHtml(donation.priority)}">Prioridad ${escapeHtml(donation.priority)}</span>
+              <time>${escapeHtml(dateLabel)}</time>
+            </div>
           </div>
           <p class="donation-shelter">${escapeHtml(donation.shelter_name)}</p>
           <p class="donation-message">${escapeHtml(donation.message)}</p>
