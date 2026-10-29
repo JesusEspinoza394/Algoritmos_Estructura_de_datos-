@@ -15,14 +15,14 @@ const icons = {
 };
 
 const brand = (className = "brand") => `
-  <a class="${className}" href="/login-cuenta" data-route="/login-cuenta" aria-label="Manos Cerca, inicio">
+  <a class="${className}" href="/login-cuenta" data-route="/login-cuenta" aria-label="TodoSuma, inicio">
     <span class="brand-mark">${icons.brand}</span>
-    <span>manos cerca</span>
+    <span>TodoSuma</span>
   </a>
 `;
 
 const storyPanel = `
-  <aside class="story-panel" aria-label="Acerca de Manos Cerca">
+  <aside class="story-panel" aria-label="Acerca de TodoSuma">
     ${brand()}
     <div class="story-content">
       <p class="eyebrow">Una comunidad que acompaña</p>
@@ -42,7 +42,7 @@ const layout = (content) => `
     <div class="form-wrap">
       ${brand("brand mobile-brand")}
       ${content}
-      <p class="form-footer">Manos Cerca · Apoyo que conecta</p>
+      <p class="form-footer">TodoSuma · Apoyo que conecta</p>
     </div>
   </section>
 `;
