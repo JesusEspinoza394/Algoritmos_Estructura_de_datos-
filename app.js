@@ -25,7 +25,8 @@ const storyPanel = `
     <div class="story-content">
       <p class="eyebrow">Una comunidad que acompaña</p>
       <h1>Un pequeño gesto puede <span>cambiar mucho.</span></h1>
-      <p class="story-copy">Conectamos a personas que necesitan apoyo con una comunidad dispuesta a ayudar. Cada paso cuenta cuando lo damos juntos.</p>
+      <p class="story-copy">Comparte lo que tienes, brinda esperanza y ayuda a quienes más lo necesitan. Aquí, cada donación cuenta y cada aporte puede marcar la diferencia.</p>
+      <p class="story-copy">¡Dona hoy, transforma el mañana!</p>
     </div>
   </aside>
 `;
@@ -36,7 +37,6 @@ const layout = (content) => `
     <div class="form-wrap">
       ${brand("brand mobile-brand")}
       ${content}
-      <p class="form-footer">TodoSuma · Apoyo que conecta</p>
     </div>
   </section>
 `;
@@ -94,7 +94,7 @@ const pages = {
     </div>
     <div class="role-options">
       <a class="role-card" href="/login-usuario" data-route="/login-usuario">
-        <span class="role-icon">${icons.user}</span>
+        <span class="role-icon" aria-hidden="true">🫶</span>
         <span class="role-copy">
           <strong>Soy usuario</strong>
           <span>Quiero encontrar apoyo o colaborar.</span>
@@ -102,7 +102,7 @@ const pages = {
         ${icons.arrow}
       </a>
       <a class="role-card" href="/login-admin" data-route="/login-admin">
-        <span class="role-icon admin">${icons.admin}</span>
+        <span class="role-icon admin" aria-hidden="true">🧑‍💼</span>
         <span class="role-copy">
           <strong>Soy administrador</strong>
           <span>Ingresar al espacio de administración.</span>
