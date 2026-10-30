@@ -1,7 +1,6 @@
 const app = document.querySelector("#app");
 
 const icons = {
-  brand: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.4 8.7c0 5.1-8.4 10-8.4 10s-8.4-4.9-8.4-10a4.4 4.4 0 0 1 8.4-1.8 4.4 4.4 0 0 1 8.4 1.8Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   user: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   admin: `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   arrow: `<svg class="arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
@@ -16,7 +15,6 @@ const icons = {
 
 const brand = (className = "brand") => `
   <a class="${className}" href="/login-cuenta" data-route="/login-cuenta" aria-label="TodoSuma, inicio">
-    <span class="brand-mark">${icons.brand}</span>
     <span>TodoSuma</span>
   </a>
 `;
@@ -28,10 +26,6 @@ const storyPanel = `
       <p class="eyebrow">Una comunidad que acompaña</p>
       <h1>Un pequeño gesto puede <span>cambiar mucho.</span></h1>
       <p class="story-copy">Conectamos a personas que necesitan apoyo con una comunidad dispuesta a ayudar. Cada paso cuenta cuando lo damos juntos.</p>
-    </div>
-    <div class="community-note">
-      <span class="community-icon">${icons.community}</span>
-      <span>Un espacio cercano, solidario y creado para apoyarnos.</span>
     </div>
   </aside>
 `;

@@ -93,7 +93,6 @@ a {
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: 11px;
   width: fit-content;
   color: inherit;
   font-family: Manrope, sans-serif;
@@ -101,21 +100,6 @@ a {
   font-weight: 800;
   text-decoration: none;
   letter-spacing: -0.7px;
-}
-
-.brand-mark {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border: 1px solid rgb(255 255 255 / 33%);
-  border-radius: 13px;
-  background: rgb(255 255 255 / 12%);
-}
-
-.brand-mark svg {
-  width: 21px;
-  height: 21px;
 }
 
 .story-content {
@@ -478,11 +462,6 @@ a {
   flex: 0 0 auto;
   color: var(--green-dark);
   font-size: 19px;
-}
-
-.portal-brand .brand-mark {
-  border-color: #d9e9df;
-  background: var(--green-light);
 }
 
 .portal-tabs {
@@ -1054,11 +1033,6 @@ a {
     color: var(--green-dark);
   }
 
-  .mobile-brand .brand-mark {
-    border-color: #d9e9df;
-    background: var(--green-light);
-  }
-
   .portal-header {
     position: static;
     min-height: 0;
@@ -1139,11 +1113,6 @@ a {
   .portal-brand {
     gap: 7px;
     font-size: 16px;
-  }
-
-  .portal-brand .brand-mark {
-    width: 32px;
-    height: 32px;
   }
 
   .filter-tabs {
