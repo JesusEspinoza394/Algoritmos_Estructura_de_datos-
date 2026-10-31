@@ -5,6 +5,7 @@ from urllib.parse import unquote, urlsplit
 
 APP_DIR = Path(__file__).resolve().parent
 APP_ROUTES = {
+    "/",
     "/login-cuenta",
     "/login-usuario",
     "/registrame-usuario",

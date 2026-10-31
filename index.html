@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#f7faf8">
+    <meta name="theme-color" content="#02261b">
     <meta
       name="description"
       content="Una plataforma para conectar personas que necesitan apoyo con quienes desean ayudar."
@@ -14,6 +14,68 @@
     <script src="/app.js" defer></script>
   </head>
   <body>
-    <main id="app" class="page-shell"></main>
+    <main id="app" class="page-shell app-home" aria-label="TodoSuma, red colaborativa">
+      <aside class="story-panel" aria-label="Acerca de TodoSuma">
+        <a class="brand" href="/login-cuenta" data-route="/login-cuenta" aria-label="TodoSuma, inicio">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M20.8 8.7c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10a4.7 4.7 0 0 1 8.8-2.3 4.7 4.7 0 0 1 8.8 2.3Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="brand-name">TodoSuma</span>
+          <span class="brand-caption">RED COLABORATIVA</span>
+        </a>
+        <div class="story-content">
+          <h1>Un pequeño gesto<br>puede cambiar<br><span>mucho.</span></h1>
+          <p class="story-copy">Comparte lo que tienes, brinda esperanza y ayuda a quienes más lo necesitan. Aquí, cada donación cuenta y cada aporte puede marcar la diferencia.</p>
+          <p class="story-slogan"><span aria-hidden="true">⚡</span> ¡Dona hoy, transforma el mañana!</p>
+        </div>
+      </aside>
+      <section class="form-panel" aria-labelledby="welcome-heading">
+        <div class="form-wrap">
+          <div class="form-heading">
+            <h2 id="welcome-heading">¡Qué bueno tenerte aquí!</h2>
+            <p>Para continuar, cuéntanos cómo quieres ingresar hoy.</p>
+          </div>
+          <div class="role-options">
+            <a class="role-card home-role-card" href="/login-usuario" data-route="/login-usuario">
+              <span class="role-icon home-role-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M20.8 8.7c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10a4.7 4.7 0 0 1 8.8-2.3 4.7 4.7 0 0 1 8.8 2.3Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="role-copy">
+                <strong>Soy usuario</strong>
+                <span>Quiero encontrar apoyo, ser voluntario o colaborar con donaciones solidarias.</span>
+                <span class="role-action">Ingresar como colaborador o solicitante
+                  <svg class="arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </span>
+            </a>
+            <a class="role-card home-role-card admin" href="/login-admin" data-route="/login-admin">
+              <span class="role-icon home-role-icon admin" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m16 0v-2a4 4 0 0 0-3-3.87M14 3.13a4 4 0 0 1 0 7.75M10 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" transform="translate(2 0)" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="role-copy">
+                <strong>Soy administrador</strong>
+                <span>Ingresa al espacio de control, auditoría y administración de campañas.</span>
+                <span class="role-action">Acceso institucional y seguridad
+                  <svg class="arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <noscript>
+      <p>Activa JavaScript para usar el inicio de sesión y las funciones de TodoSuma.</p>
+    </noscript>
   </body>
 </html>
