@@ -64,10 +64,10 @@ function getSavedUser() {
   }
 }
 
-function portalLayout({ name, email, role, content, tabs = "" }) {
+function portalLayout({ name, email, role, content, tabs = "", className = "" }) {
   const initial = (name || email || "U").trim().charAt(0).toUpperCase();
   return `
-    <section class="portal-shell">
+    <section class="portal-shell ${className}">
       <header class="portal-header">
         <div class="portal-header-main">
           ${brand("brand portal-brand")}
@@ -211,21 +211,21 @@ const pages = {
       name: user.name,
       email: user.email,
       role: "user",
-      tabs: `<nav class="portal-tabs" aria-label="Navegación de usuario"><span class="portal-tab active">${icons.box} Nueva donación</span></nav>`,
+      className: "donation-portal",
       content: `
         <section class="portal-intro">
-          <p class="eyebrow">Tu generosidad llega más lejos</p>
-          <h1>Comparte algo bueno.</h1>
+          <p class="eyebrow"><span aria-hidden="true">●</span> Tu generosidad llega más lejos</p>
+          <h1>Comparte algo bueno <span aria-hidden="true">✨</span></h1>
           <p>Cuéntanos qué deseas donar y a qué albergue te gustaría apoyar.</p>
         </section>
         <section class="donation-card">
           <div class="card-heading">
             <span class="role-icon">${icons.box}</span>
-            <div><h2>Tu donación</h2><p>Completa los datos para que podamos coordinarla.</p></div>
+            <div><h2>Tu donación 🎁</h2><p>Completa los datos para que podamos coordinarla.</p></div>
           </div>
           <form class="form-fields donation-fields" data-form="donation">
             <div class="field">
-              <label for="donation-type">Tipo de objeto a donar</label>
+              <label for="donation-type">Tipo de objeto a donar 🏷️</label>
               <select id="donation-type" name="object_type" required>
                 <option value="" selected disabled>Selecciona una categoría</option>
                 <option>Alimentos</option>
@@ -237,15 +237,15 @@ const pages = {
               </select>
             </div>
             <div class="field">
-              <label for="shelter-name">Nombre del albergue</label>
-              <input id="shelter-name" name="shelter_name" type="text" maxlength="160" placeholder="¿A qué albergue deseas ayudar?" required>
+              <label for="shelter-name">Nombre de la persona o albergue 🏠 🧍</label>
+              <input id="shelter-name" name="shelter_name" type="text" maxlength="160" placeholder="¿A qué persona o albergue deseas ayudar? (ej. Albergue San Francisco, Juan Pérez)" required>
             </div>
             <div class="field">
-              <label for="donation-message">Mensaje</label>
-              <textarea id="donation-message" name="message" rows="5" maxlength="2000" placeholder="Cuéntanos algo sobre tu donación..." required></textarea>
+              <label for="donation-message">Mensaje o detalles adicionales 💬</label>
+              <textarea id="donation-message" name="message" rows="4" maxlength="2000" placeholder="Cuéntanos algo sobre tu donación, estado de los artículos, cantidad o disponibilidad..." required></textarea>
               <p class="field-hint">Máximo 2000 caracteres.</p>
             </div>
-            <button class="submit-button" type="submit">Enviar donación ${icons.enter}</button>
+            <button class="submit-button" type="submit">Enviar donación ${icons.arrow}</button>
           </form>
           <p class="form-notice" data-notice role="status" aria-live="polite" hidden></p>
         </section>
@@ -275,16 +275,17 @@ const pages = {
       name: "Administrador",
       email: user.email,
       role: "admin",
+      className: "admin-portal",
       tabs: `
         <nav class="portal-tabs" aria-label="Cola de donaciones">
-          <button class="portal-tab ${adminDonationStatus === "pending" ? "active" : ""}" type="button" data-admin-status="pending">${icons.box} En cola</button>
-          <button class="portal-tab ${adminDonationStatus === "sent" ? "active" : ""}" type="button" data-admin-status="sent">Enviadas</button>
+          <button class="portal-tab ${adminDonationStatus === "pending" ? "active" : ""}" type="button" data-admin-status="pending" aria-pressed="${adminDonationStatus === "pending"}">${icons.box} En cola</button>
+          <button class="portal-tab ${adminDonationStatus === "sent" ? "active" : ""}" type="button" data-admin-status="sent" aria-pressed="${adminDonationStatus === "sent"}">Enviadas</button>
         </nav>
       `,
       content: `
         <section class="portal-intro admin-intro">
           <p class="eyebrow">Panel de administración</p>
-          <h1>${adminDonationStatus === "pending" ? "Cola prioritaria" : "Historial de enviadas"}</h1>
+          <h1>${adminDonationStatus === "pending" ? 'Cola prioritaria <span aria-hidden="true">⚡</span>' : "Historial de enviadas"}</h1>
           <p>${adminDonationStatus === "pending" ? "La cola muestra primero el número de prioridad más alto. Si empatan, se muestra primero la donación más antigua." : "Consulta las donaciones que ya fueron marcadas como enviadas."}</p>
         </section>
         <section class="admin-summary" aria-label="Resumen de donaciones">
