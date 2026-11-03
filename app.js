@@ -536,9 +536,11 @@ async function loadAdminDonations() {
       throw new Error("La API no devolvió una lista de donaciones válida.");
     }
     adminDonations = result.donations;
-    const shelterCount = new Set(
-      adminDonations.map((donation) => donation.shelter_name.trim().toLocaleLowerCase()),
-    ).size;
+    const shelterCount = adminDonationStatus === "sent"
+      ? new Set(
+        adminDonations.map((donation) => donation.shelter_name.trim().toLocaleLowerCase()),
+      ).size
+      : 0;
     app.querySelector("[data-total-count]").textContent = String(adminDonations.length);
     app.querySelector("[data-shelter-count]").textContent = String(shelterCount);
     renderAdminDonations();
