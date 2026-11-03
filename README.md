@@ -45,6 +45,8 @@ El resultado se genera en la carpeta `build/`.
 
 Así, quien copie el repositorio tendrá que configurar la URL de su propia API antes de publicar. `API_BASE_URL` no es una credencial: se incorpora al `config.js` generado y cualquier visitante del sitio publicado puede verla. Nunca pongas contraseñas, `DATABASE_URL` ni `JWT_SECRET_KEY` en el servicio estático.
 
+Si el sitio publica el `config.js` del repositorio con `https://tu-api.example.com`, el build no está usando `build/` o falta configurar `API_BASE_URL`. Revisa **Publish Directory = `build`**, guarda la variable en el Static Site y ejecuta un nuevo deploy con limpieza de caché.
+
 Configura `FRONTEND_ORIGINS` en el servicio de la API en Render con el origen exacto desde el que se sirve esta página, incluyendo `https://` y sin una ruta final; por ejemplo, `https://mi-interfaz.onrender.com`. Para permitir el origen publicado y la prueba local, sepáralos con una coma. Después de cambiar esta variable, vuelve a desplegar la API.
 
 La pantalla de administrador solicita correo electrónico, pero la ruta de la API compara ese valor con `ADMIN_USERNAME`. Configura `ADMIN_USERNAME` en Render con el mismo correo que se escribirá en el formulario.

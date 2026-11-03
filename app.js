@@ -411,6 +411,11 @@ async function sendApiRequest(path, { method = "POST", values, token, query } = 
   if (!baseUrl) {
     throw new Error("Falta configurar la dirección de la API en config.js.");
   }
+  if (new URL(baseUrl).hostname.endsWith(".example.com")) {
+    throw new Error(
+      "Esta página aún usa una URL de ejemplo. En Render, configura API_BASE_URL con la URL real de tu API y vuelve a desplegar el sitio.",
+    );
+  }
 
   const queryString = query ? `?${new URLSearchParams(query)}` : "";
   const headers = {};

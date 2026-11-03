@@ -22,6 +22,10 @@ def build_site(api_base_url, output_dir=OUTPUT):
         or parsed_url.fragment
     ):
         raise ValueError("API_BASE_URL debe ser una URL HTTP(S) válida sin credenciales.")
+    if parsed_url.hostname is None or parsed_url.hostname.endswith(".example.com"):
+        raise ValueError(
+            "API_BASE_URL todavía tiene un dominio de ejemplo. Configura la URL real de tu API."
+        )
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
