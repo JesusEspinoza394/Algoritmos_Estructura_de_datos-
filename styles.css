@@ -43,14 +43,8 @@ a {
 }
 
 .page-shell {
-  display: grid;
-  min-height: 100vh;
-  grid-template-columns: minmax(340px, 0.92fr) minmax(480px, 1.08fr);
-}
-
-.page-shell.app-portal,
-.page-shell.app-thanks {
   display: block;
+  min-height: 100vh;
 }
 
 .story-panel {
@@ -358,10 +352,6 @@ a {
   display: none;
 }
 
-.page-shell.app-home {
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-}
-
 .app-home .story-panel {
   justify-content: flex-start;
   gap: 0;
@@ -604,10 +594,6 @@ a {
 
 .story-footer {
   display: none;
-}
-
-.page-shell.app-login {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 
 .app-login .story-panel {
@@ -957,10 +943,6 @@ a {
 .app-login .inline-link {
   margin-left: 3px;
   color: #07805b;
-}
-
-.page-shell.app-register {
-  grid-template-columns: minmax(0, 7fr) minmax(0, 9fr);
 }
 
 .app-register .story-panel {
@@ -1480,8 +1462,8 @@ a {
 }
 
 .donation-portal .portal-header {
-  min-height: 50px;
-  padding: 6px 20px;
+  min-height: 0;
+  padding: 8px 12px;
 }
 
 .donation-portal .portal-brand {
@@ -1517,13 +1499,14 @@ a {
 }
 
 .donation-portal .portal-content {
-  width: min(100% - 44px, 706px);
-  padding: 34px 0 60px;
+  width: calc(100% - 32px);
+  max-width: 560px;
+  padding: 25px 0 40px;
 }
 
 .donation-portal .portal-intro {
   max-width: 650px;
-  margin-bottom: 22px;
+  margin-bottom: 16px;
 }
 
 .donation-portal .portal-intro .eyebrow {
@@ -1565,8 +1548,8 @@ a {
 }
 
 .donation-portal .donation-card {
-  max-width: 496px;
-  padding: 26px;
+  max-width: none;
+  padding: 18px;
   border-color: #e5ebf0;
   border-radius: 18px;
   box-shadow: 0 7px 20px rgb(25 49 43 / 3%);
@@ -1606,7 +1589,7 @@ a {
 }
 
 .donation-portal .donation-fields {
-  gap: 16px;
+  gap: 12px;
 }
 
 .donation-portal .donation-fields .field {
@@ -1787,33 +1770,6 @@ a {
   justify-content: space-between;
   gap: 15px;
   margin-bottom: 17px;
-}
-
-.filter-tabs {
-  display: inline-flex;
-  gap: 4px;
-  padding: 4px;
-  border-radius: 10px;
-  background: #f1f5f2;
-}
-
-.filter-tab {
-  min-height: 34px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 7px;
-  color: #73837c;
-  background: transparent;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 700;
-  transition: color 150ms ease, background 150ms ease, box-shadow 150ms ease;
-}
-
-.filter-tab.active {
-  color: var(--green-dark);
-  background: white;
-  box-shadow: 0 1px 4px rgb(25 49 43 / 10%);
 }
 
 .result-count {
@@ -2202,9 +2158,149 @@ a {
 }
 
 .admin-portal .donations-toolbar {
+  flex-wrap: wrap;
   margin-bottom: 14px;
   padding-bottom: 11px;
   border-bottom: 1px solid #eef2f5;
+}
+
+.admin-portal .queue-order-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-portal .queue-order-button {
+  display: inline-flex;
+  min-height: 31px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+  border: 1px solid #dce5eb;
+  border-radius: 7px;
+  color: #536b80;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.admin-portal .queue-order-button span {
+  color: #71859b;
+  font-size: 8px;
+  font-weight: 400;
+}
+
+.admin-portal .queue-order-button.active {
+  border-color: #8de8bd;
+  color: #087c56;
+  background: #effbf6;
+}
+
+.admin-portal .queue-search-card {
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid #e5ebf0;
+  border-radius: 12px;
+  background: #fbfcfe;
+}
+
+.admin-portal .queue-search-heading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 13px;
+}
+
+.admin-portal .queue-search-heading .role-icon {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+}
+
+.admin-portal .queue-search-heading h2 {
+  margin: 0 0 4px;
+  color: #10233b;
+  font-size: 13px;
+}
+
+.admin-portal .queue-search-heading p {
+  margin: 0;
+  color: #61758a;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.admin-portal .queue-search-form {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.admin-portal .queue-search-form input {
+  min-width: 0;
+  min-height: 36px;
+  flex: 1;
+  padding: 0 11px;
+  border: 1px solid #dce5eb;
+  border-radius: 7px;
+  color: #10233b;
+  background: white;
+  font: inherit;
+  font-size: 11px;
+}
+
+.admin-portal .queue-search-form input:focus {
+  border-color: #16835d;
+  outline: 2px solid rgb(22 131 93 / 15%);
+}
+
+.admin-portal .send-donation-button.queue-search-submit {
+  position: static;
+  min-height: 36px;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0 12px;
+  transform: none;
+}
+
+.admin-portal .queue-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 11px;
+  color: #61758a;
+  font-size: 9px;
+}
+
+.admin-portal .queue-suggestions [data-search-suggestions] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-portal .suggestion-chip {
+  min-height: 25px;
+  padding: 0 9px;
+  border: 1px solid #bdf2d8;
+  border-radius: 999px;
+  color: #087c56;
+  background: #effbf6;
+  cursor: pointer;
+  font: inherit;
+  font-size: 9px;
+}
+
+.admin-portal .suggestion-chip:hover,
+.admin-portal .suggestion-chip:focus-visible {
+  border-color: #16835d;
+  background: #d9f9e9;
+}
+
+.admin-portal .suggestion-empty {
+  color: #71859b;
 }
 
 .admin-portal .result-count {
@@ -2222,7 +2318,6 @@ a {
   position: relative;
   gap: 12px;
   padding: 14px;
-  padding-right: 92px;
   border-color: #e8edf2;
   border-radius: 11px;
   background: #fbfcfe;
@@ -2322,8 +2417,7 @@ a {
   font-size: 8px;
 }
 
-.admin-portal .send-donation-button,
-.admin-portal .sent-status {
+.admin-portal .donation-item .sent-status {
   position: absolute;
   top: 50%;
   right: 14px;
@@ -2455,57 +2549,18 @@ a {
 }
 
 @media (max-width: 850px) {
-  .page-shell {
-    grid-template-columns: minmax(270px, 0.82fr) minmax(390px, 1.18fr);
-  }
-
-  .page-shell.app-register {
-    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
-  }
-
-  .page-shell.app-login {
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  }
-
   .story-panel {
     padding-right: 32px;
     padding-left: 32px;
-  }
-
-  .app-login .story-panel {
-    padding-right: 32px;
-    padding-left: 32px;
-  }
-
-  .app-login .story-content h1 {
-    font-size: clamp(36px, 4.5vw, 46px);
   }
 
   .form-panel {
     padding-right: 36px;
     padding-left: 36px;
   }
-
-  .app-home .story-content h1 {
-    font-size: clamp(34px, 4.8vw, 48px);
-  }
 }
 
 @media (max-width: 680px) {
-  .page-shell {
-    display: block;
-  }
-
-  .app-login .story-panel {
-    display: flex;
-    min-height: 300px;
-    padding: 24px 24px 28px;
-  }
-
-  .app-register .story-panel {
-    display: flex;
-  }
-
   .app-login .story-panel::before {
     top: 0;
     right: -25%;
@@ -2519,56 +2574,6 @@ a {
     height: 190px;
   }
 
-  .app-login .story-content {
-    flex: 0 1 auto;
-    margin: 28px 0 0;
-  }
-
-  .app-login .story-content h1 {
-    font-size: clamp(32px, 9vw, 42px);
-  }
-
-  .app-login .story-copy {
-    margin-top: 12px;
-    font-size: 12px;
-  }
-
-  .app-login .story-slogan {
-    margin-top: 13px;
-    font-size: 11px;
-  }
-
-  .app-login .story-footer,
-  .app-login .mobile-brand {
-    display: none;
-  }
-
-  .app-login .form-panel {
-    min-height: auto;
-    align-items: start;
-    padding: 34px 24px 48px;
-  }
-
-  .app-register .form-panel {
-    min-height: auto;
-    padding: 34px 24px 48px;
-  }
-
-  .app-login .form-wrap {
-    padding: 0;
-  }
-
-  .app-register .form-wrap {
-    width: min(100%, 420px);
-    padding: 0;
-  }
-
-  .app-home .story-panel {
-    display: flex;
-    min-height: auto;
-    padding: 28px 24px 34px;
-  }
-
   .app-home .story-panel::before {
     top: 10%;
     right: -25%;
@@ -2580,37 +2585,6 @@ a {
     right: -8%;
     width: 185px;
     height: 185px;
-  }
-
-  .app-home .story-content {
-    flex: 0 1 auto;
-    margin: 56px 0 0;
-  }
-
-  .app-home .story-content h1 {
-    font-size: clamp(32px, 10vw, 44px);
-  }
-
-  .app-home .form-panel {
-    min-height: auto;
-    align-items: start;
-    padding: 42px 24px 54px;
-  }
-
-  .app-home .form-wrap {
-    padding: 0;
-  }
-
-  .app-home .mobile-brand {
-    display: none;
-  }
-
-  .app-home .form-heading {
-    text-align: center;
-  }
-
-  .app-home .home-role-card {
-    padding: 18px;
   }
 
   .story-panel {
@@ -2843,16 +2817,6 @@ a {
     gap: 7px;
     font-size: 16px;
   }
-
-  .filter-tabs {
-    width: 100%;
-  }
-
-  .filter-tab {
-    flex: 1;
-    padding: 0 7px;
-    font-size: 10px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2863,5 +2827,79 @@ a {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+.app-home .story-panel,
+.app-login .story-panel {
+  display: flex;
+  min-height: 300px;
+  padding: 28px 24px 34px;
+}
+
+.app-home .story-content,
+.app-login .story-content {
+  flex: 0 1 auto;
+  margin: 40px 0 0;
+}
+
+.app-home .story-content h1,
+.app-login .story-content h1 {
+  font-size: clamp(32px, 8vw, 44px);
+}
+
+.app-login .story-copy {
+  margin-top: 12px;
+  font-size: 12px;
+}
+
+.app-login .story-slogan {
+  margin-top: 13px;
+  font-size: 11px;
+}
+
+.app-home .form-panel,
+.app-login .form-panel {
+  min-height: auto;
+  align-items: start;
+  padding: 34px 24px 48px;
+}
+
+.app-home .form-wrap,
+.app-login .form-wrap {
+  width: min(100%, 430px);
+  margin: 0 auto;
+  padding: 0;
+}
+
+.app-home .role-card {
+  padding: 18px;
+}
+
+.app-home .form-heading {
+  text-align: center;
+}
+
+.app-login .back-link {
+  margin-bottom: 20px;
+}
+
+@media (max-width: 520px) {
+  .admin-portal .donations-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-portal .queue-order-controls {
+    width: 100%;
+  }
+
+  .admin-portal .queue-order-button {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .admin-portal .queue-order-button span {
+    display: none;
   }
 }

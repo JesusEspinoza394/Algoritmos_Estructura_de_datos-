@@ -92,6 +92,7 @@ function portalLayout({ name, email, role, content, tabs = "", className = "" })
 let adminDonations = [];
 let adminDonationStatus = "pending";
 let adminRequestId = 0;
+let queuePriorityOrder = "desc";
 
 const pages = {
   "/login-cuenta": () => homePageMarkup,
@@ -286,16 +287,47 @@ const pages = {
         <section class="portal-intro admin-intro">
           <p class="eyebrow">Panel de administración</p>
           <h1>${adminDonationStatus === "pending" ? 'Cola prioritaria <span aria-hidden="true">⚡</span>' : "Historial de enviadas"}</h1>
-          <p>${adminDonationStatus === "pending" ? "La cola muestra primero el número de prioridad más alto. Si empatan, se muestra primero la donación más antigua." : "Consulta las donaciones que ya fueron marcadas como enviadas."}</p>
+          <p>${adminDonationStatus === "pending" ? "Alterna entre las prioridades más altas o más bajas; las donaciones con igual prioridad conservan su orden de llegada." : "Consulta las donaciones que ya fueron marcadas como enviadas."}</p>
         </section>
         <section class="admin-summary" aria-label="Resumen de donaciones">
           <div class="summary-card"><span>${adminDonationStatus === "pending" ? "Donaciones en cola" : "Donaciones enviadas"}</span><strong data-total-count>—</strong></div>
           <div class="summary-card"><span>Albergues apoyados</span><strong data-shelter-count>—</strong></div>
           <button class="refresh-button" type="button" data-action="refresh">${icons.refresh} Actualizar</button>
         </section>
+        ${adminDonationStatus === "pending" ? `
+          <section class="queue-search-card" aria-labelledby="queue-search-title">
+            <div class="queue-search-heading">
+              <span class="role-icon">${icons.box}</span>
+              <div>
+                <h2 id="queue-search-title">Buscar una donación</h2>
+                <p>Escribe el tipo de objeto exacto. Usaremos búsqueda binaria en la cola y enviaremos una coincidencia.</p>
+              </div>
+            </div>
+            <form class="queue-search-form" data-form="queue-search">
+              <label class="sr-only" for="queue-search-input">Tipo de objeto</label>
+              <input id="queue-search-input" name="object_type" type="search" placeholder="Ej.: Alimentos" autocomplete="off" required>
+              <button class="send-donation-button queue-search-submit" type="submit">${icons.check} Enviar</button>
+            </form>
+            <div class="queue-suggestions">
+              <span>Sugerencias aleatorias:</span>
+              <div data-search-suggestions aria-label="Tipos de objeto sugeridos"></div>
+            </div>
+            <p class="form-notice admin-notice" data-search-notice role="status" aria-live="polite" hidden></p>
+          </section>
+        ` : ""}
         <section class="donations-panel">
           <div class="donations-toolbar">
             <span class="result-count" data-result-count></span>
+            ${adminDonationStatus === "pending" ? `
+              <div class="queue-order-controls" role="group" aria-label="Orden de prioridad">
+                <button class="queue-order-button ${queuePriorityOrder === "desc" ? "active" : ""}" type="button" data-queue-order="desc" aria-pressed="${queuePriorityOrder === "desc"}">
+                  Desencolar <span>Mayor a menor</span>
+                </button>
+                <button class="queue-order-button ${queuePriorityOrder === "asc" ? "active" : ""}" type="button" data-queue-order="asc" aria-pressed="${queuePriorityOrder === "asc"}">
+                  Encolar <span>Menor a mayor</span>
+                </button>
+              </div>
+            ` : ""}
           </div>
           <p class="form-notice admin-notice" data-admin-notice role="status" aria-live="polite" hidden></p>
           <div class="donation-list" data-donation-list aria-live="polite">
@@ -347,6 +379,16 @@ function navigate(path) {
 }
 
 app.addEventListener("click", (event) => {
+  const suggestion = event.target.closest("[data-search-suggestion]");
+  if (suggestion) {
+    const searchInput = app.querySelector("#queue-search-input");
+    if (searchInput) {
+      searchInput.value = suggestion.dataset.searchSuggestion;
+      searchInput.focus();
+    }
+    return;
+  }
+
   const action = event.target.closest("[data-action]");
   if (action?.dataset.action === "admin-password-help") {
     showNotice(
@@ -376,28 +418,23 @@ app.addEventListener("click", (event) => {
     loadAdminDonations();
     return;
   }
-  const sendButton = event.target.closest("[data-send-donation]");
-  if (sendButton) {
-    markDonationSent(sendButton);
-    return;
-  }
   const statusTab = event.target.closest("[data-admin-status]");
   if (statusTab && statusTab.dataset.adminStatus !== adminDonationStatus) {
     adminDonationStatus = statusTab.dataset.adminStatus;
     render();
     return;
   }
-  const filterButton = event.target.closest("[data-admin-filter]");
-  if (filterButton) {
-    app.querySelectorAll("[data-admin-filter]").forEach((button) => {
-      const active = button === filterButton;
+  const queueOrderButton = event.target.closest("[data-queue-order]");
+  if (queueOrderButton && queueOrderButton.dataset.queueOrder !== queuePriorityOrder) {
+    queuePriorityOrder = queueOrderButton.dataset.queueOrder;
+    app.querySelectorAll("[data-queue-order]").forEach((button) => {
+      const active = button.dataset.queueOrder === queuePriorityOrder;
       button.classList.toggle("active", active);
-      button.setAttribute("aria-selected", String(active));
+      button.setAttribute("aria-pressed", String(active));
     });
-    renderAdminDonations(filterButton.dataset.adminFilter);
+    renderAdminDonations();
     return;
   }
-
   const link = event.target.closest("[data-route]");
   if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
     return;
@@ -461,9 +498,61 @@ function showNotice(notice, message) {
 
 app.addEventListener("submit", async (event) => {
   const form = event.target.closest("[data-form]");
-  if (!form || form.dataset.form === "donation") return;
+  if (!form) return;
 
   event.preventDefault();
+  if (form.dataset.form === "queue-search") {
+    const notice = app.querySelector("[data-search-notice]");
+    const button = form.querySelector('button[type="submit"]');
+    const objectType = new FormData(form).get("object_type");
+    const donation = typeof objectType === "string"
+      ? findDonationByObjectTypeWithBinarySearch(adminDonations, objectType)
+      : null;
+    if (!donation) {
+      showNotice(notice, "No se encontró ese tipo de objeto en la cola. Prueba con una sugerencia disponible.");
+      return;
+    }
+    notice.hidden = true;
+    await markDonationSent(button, donation.id);
+    return;
+  }
+
+  if (form.dataset.form === "donation") {
+    const notice = app.querySelector("[data-notice]");
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonContent = submitButton.innerHTML;
+    const values = Object.fromEntries(new FormData(form).entries());
+    submitButton.disabled = true;
+    submitButton.textContent = "Enviando...";
+    form.setAttribute("aria-busy", "true");
+    notice.hidden = true;
+
+    try {
+      await sendApiRequest("/api/donations", {
+        token: sessionStorage.getItem("manos_cerca_access_token"),
+        values: {
+          object_type: values.object_type,
+          shelter_name: values.shelter_name,
+          message: values.message,
+        },
+      });
+      navigate("/gracias-por-donar");
+    } catch (error) {
+      const message = error instanceof TypeError
+        ? "No se pudo conectar con la API. Verifica su URL y la configuración CORS de Render."
+        : error.message;
+      showNotice(notice, message);
+    } finally {
+      if (form.isConnected) {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonContent;
+        form.removeAttribute("aria-busy");
+      }
+    }
+    return;
+  }
+
+  if (!["user-register", "user-login", "admin-login"].includes(form.dataset.form)) return;
   const notice = app.querySelector("[data-notice]");
   const submitButton = form.querySelector('button[type="submit"]');
   const originalButtonContent = submitButton.innerHTML;
@@ -536,13 +625,14 @@ async function loadAdminDonations() {
       throw new Error("La API no devolvió una lista de donaciones válida.");
     }
     adminDonations = result.donations;
-    const shelterCount = adminDonationStatus === "sent"
-      ? new Set(
-        adminDonations.map((donation) => donation.shelter_name.trim().toLocaleLowerCase()),
-      ).size
-      : 0;
+    if (!Number.isInteger(result.unique_shelter_count) || result.unique_shelter_count < 0) {
+      throw new Error("La API no devolvió el total de albergues apoyados.");
+    }
     app.querySelector("[data-total-count]").textContent = String(adminDonations.length);
-    app.querySelector("[data-shelter-count]").textContent = String(shelterCount);
+    app.querySelector("[data-shelter-count]").textContent = String(result.unique_shelter_count);
+    if (adminDonationStatus === "pending") {
+      renderQueueSuggestions();
+    }
     renderAdminDonations();
   } catch (error) {
     if (
@@ -557,8 +647,62 @@ async function loadAdminDonations() {
   }
 }
 
-async function markDonationSent(button) {
-  const donationId = button.dataset.sendDonation;
+function normalizeObjectType(value) {
+  return value.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
+}
+
+function findDonationByObjectTypeWithBinarySearch(donations, searchValue) {
+  const searchKey = normalizeObjectType(searchValue);
+  if (!searchKey) return null;
+
+  const sortedDonations = donations
+    .map((donation, queuePosition) => ({
+      donation,
+      queuePosition,
+      key: normalizeObjectType(donation.object_type),
+    }))
+    .sort((left, right) => {
+      if (left.key !== right.key) return left.key < right.key ? -1 : 1;
+      return left.queuePosition - right.queuePosition;
+    });
+
+  let low = 0;
+  let high = sortedDonations.length;
+  while (low < high) {
+    const middle = Math.floor((low + high) / 2);
+    if (sortedDonations[middle].key < searchKey) {
+      low = middle + 1;
+    } else {
+      high = middle;
+    }
+  }
+
+  return low < sortedDonations.length
+    && sortedDonations[low].key === searchKey
+    ? sortedDonations[low].donation
+    : null;
+}
+
+function renderQueueSuggestions() {
+  const container = app.querySelector("[data-search-suggestions]");
+  if (!container) return;
+
+  const objectTypes = [...new Set(adminDonations.map((donation) => donation.object_type))];
+  for (let index = objectTypes.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [objectTypes[index], objectTypes[randomIndex]] = [objectTypes[randomIndex], objectTypes[index]];
+  }
+  const suggestions = objectTypes.slice(0, 3);
+  container.innerHTML = suggestions.length
+    ? suggestions.map((objectType) => `
+      <button class="suggestion-chip" type="button" data-search-suggestion="${escapeHtml(objectType)}">
+        ${escapeHtml(objectType)}
+      </button>
+    `).join("")
+    : `<span class="suggestion-empty">No hay tipos pendientes para sugerir.</span>`;
+}
+
+async function markDonationSent(button, donationId) {
   const originalText = button.textContent;
   button.disabled = true;
   button.textContent = "Enviando...";
@@ -566,11 +710,16 @@ async function markDonationSent(button) {
     await sendApiRequest(`/api/admin/donations/${encodeURIComponent(donationId)}/send`, {
       token: sessionStorage.getItem("manos_cerca_access_token"),
     });
+    const notice = app.querySelector("[data-search-notice]");
+    if (notice) {
+      notice.hidden = false;
+      notice.textContent = "Donación enviada. Se quitó de la cola y quedó guardada en el historial.";
+    }
     await loadAdminDonations();
   } catch (error) {
     button.disabled = false;
     button.textContent = originalText;
-    const notice = app.querySelector("[data-admin-notice]");
+    const notice = app.querySelector("[data-search-notice], [data-admin-notice]");
     if (notice) showNotice(notice, error.message);
   }
 }
@@ -578,7 +727,10 @@ async function markDonationSent(button) {
 function renderAdminDonations() {
   const list = app.querySelector("[data-donation-list]");
   if (!list) return;
-  const visibleDonations = adminDonations;
+  const visibleDonations = adminDonationStatus === "pending"
+    ? [...adminDonations].sort((left, right) =>
+      (queuePriorityOrder === "desc" ? right.priority - left.priority : left.priority - right.priority))
+    : adminDonations;
   const countLabel = adminDonationStatus === "pending" ? "en cola" : "enviada";
   app.querySelector("[data-result-count]").textContent =
     `${visibleDonations.length} ${visibleDonations.length === 1 ? `donación ${countLabel}` : `donaciones ${countLabel === "enviada" ? "enviadas" : countLabel}`}`;
@@ -607,51 +759,14 @@ function renderAdminDonations() {
           <p class="donation-shelter">${escapeHtml(donation.shelter_name)}</p>
           <p class="donation-message">${escapeHtml(donation.message)}</p>
           <div class="donor-info"><span>${escapeHtml(donation.user?.name || "Usuario")}</span><span>${escapeHtml(donation.user?.email || "")}</span></div>
-          ${adminDonationStatus === "pending"
-            ? `<button class="send-donation-button" type="button" data-send-donation="${escapeHtml(donation.id)}">${icons.check} Enviar</button>`
-            : `<p class="sent-status">${icons.check} Enviada${donation.sent_at ? ` el ${escapeHtml(new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short" }).format(new Date(donation.sent_at)))}` : ""}</p>`}
+          ${adminDonationStatus === "sent"
+            ? `<p class="sent-status">${icons.check} Enviada${donation.sent_at ? ` el ${escapeHtml(new Intl.DateTimeFormat("es", { dateStyle: "medium", timeStyle: "short" }).format(new Date(donation.sent_at)))}` : ""}</p>`
+            : ""}
         </div>
       </article>
     `;
   }).join("");
 }
-
-app.addEventListener("submit", async (event) => {
-  const form = event.target.closest('[data-form="donation"]');
-  if (!form) return;
-  event.preventDefault();
-  const notice = app.querySelector("[data-notice]");
-  const submitButton = form.querySelector('button[type="submit"]');
-  const originalButtonContent = submitButton.innerHTML;
-  const values = Object.fromEntries(new FormData(form).entries());
-  submitButton.disabled = true;
-  submitButton.textContent = "Enviando...";
-  form.setAttribute("aria-busy", "true");
-  notice.hidden = true;
-
-  try {
-    await sendApiRequest("/api/donations", {
-      token: sessionStorage.getItem("manos_cerca_access_token"),
-      values: {
-        object_type: values.object_type,
-        shelter_name: values.shelter_name,
-        message: values.message,
-      },
-    });
-    navigate("/gracias-por-donar");
-  } catch (error) {
-    const message = error instanceof TypeError
-      ? "No se pudo conectar con la API. Verifica su URL y la configuración CORS de Render."
-      : error.message;
-    showNotice(notice, message);
-  } finally {
-    if (form.isConnected) {
-      submitButton.disabled = false;
-      submitButton.innerHTML = originalButtonContent;
-      form.removeAttribute("aria-busy");
-    }
-  }
-});
 
 window.addEventListener("popstate", render);
 

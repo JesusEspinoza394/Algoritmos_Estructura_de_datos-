@@ -55,7 +55,7 @@ El registro escribe usuarios en la base de Neon y devuelve un token de acceso; e
 
 La prioridad se asigna por la API, no por el navegador: juguetes, útiles escolares y otro reciben 1; higiene personal, 2; ropa y calzado, 3; alimentos, 4. No se muestra en el formulario ni en la confirmación del donante; el panel administrador muestra el nivel y ordena primero el número de prioridad más alto (4, luego 3, 2 y 1).
 
-En el panel administrativo, la pestaña «En cola» presenta las donaciones por prioridad (número más alto primero) y conserva el orden de llegada cuando la prioridad coincide. Al pulsar «Enviar», la API marca la donación como enviada, la quita de la cola y la conserva en «Enviadas».
+En el panel administrativo, la pestaña «En cola» permite alternar entre «Desencolar» (prioridad mayor a menor) y «Encolar» (menor a mayor); los empates conservan el orden de llegada. Para enviar una donación, usa el buscador de la cola: acepta el tipo de objeto, ofrece hasta tres sugerencias aleatorias y localiza una coincidencia mediante búsqueda binaria antes de pedir a la API que la marque como enviada. La donación se quita de la cola y permanece en «Enviadas». «Albergues apoyados» cuenta los nombres únicos de albergues considerando todas las donaciones, por eso mantiene el mismo valor en ambas pestañas. Las vistas de usuario usan un diseño compacto y de una sola columna tanto en escritorio como en celular.
 
 No agregues contraseñas, `DATABASE_URL` ni claves secretas a `config.js`.
 
