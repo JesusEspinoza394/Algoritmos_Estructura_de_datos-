@@ -1,3 +1,3 @@
 window.APP_CONFIG = Object.freeze({
-  apiBaseUrl: "https://api-algoritmos-trabajo.onrender.com",
+  apiBaseUrl: "https://tu-api.example.com",
 });
