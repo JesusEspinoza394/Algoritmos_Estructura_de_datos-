@@ -10,7 +10,7 @@ Abre una terminal en esta carpeta y ejecuta:
 py server.py
 ```
 
-Abre `http://127.0.0.1:8000/login-cuenta` en el navegador. El servidor local permite abrir y recargar directamente las rutas de la interfaz.
+Abre `http://127.0.0.1:8000/login-cuenta` en el navegador. El servidor local permite abrir y recargar directamente las rutas de la interfaz. Por defecto, la versión local llama a la API Flask en `http://127.0.0.1:5000`; para usar otro backend, define `API_BASE_URL` antes de iniciar `server.py`.
 
 ## Rutas incluidas
 
@@ -26,15 +26,24 @@ Abre `http://127.0.0.1:8000/login-cuenta` en el navegador. El servidor local per
 
 La interfaz **no se conecta directamente a Neon**. El navegador envía los formularios a la API Flask; la API usa la variable privada `DATABASE_URL` para hablar con Neon.
 
-`config.js` contiene la URL pública de la API:
+El `config.js` del repositorio contiene únicamente una URL de ejemplo. No pongas la URL de producción directamente en el código versionado. En Render, el proceso de build genera un `config.js` para el sitio publicado a partir de `API_BASE_URL`, sin alterar el ejemplo.
 
-```js
-window.APP_CONFIG = Object.freeze({
-  apiBaseUrl: "https://api-algoritmos-trabajo.onrender.com",
-});
+Para compilar localmente en PowerShell:
+
+```powershell
+$env:API_BASE_URL = "http://127.0.0.1:5000"
+py build.py
 ```
 
-Si la API tiene otro dominio, cambia esa URL. Para probar con una API Flask ejecutándose en la misma computadora, usa `http://127.0.0.1:5000`.
+El resultado se genera en la carpeta `build/`.
+
+### Configurar el Static Site en Render
+
+- **Build Command:** `python build.py`
+- **Publish Directory:** `build`
+- En **Environment**, agrega `API_BASE_URL` con la URL base de la API que utilizará este sitio (por ejemplo, `https://tu-api.onrender.com`).
+
+Así, quien copie el repositorio tendrá que configurar la URL de su propia API antes de publicar. `API_BASE_URL` no es una credencial: se incorpora al `config.js` generado y cualquier visitante del sitio publicado puede verla. Nunca pongas contraseñas, `DATABASE_URL` ni `JWT_SECRET_KEY` en el servicio estático.
 
 Configura `FRONTEND_ORIGINS` en el servicio de la API en Render con el origen exacto desde el que se sirve esta página, incluyendo `https://` y sin una ruta final; por ejemplo, `https://mi-interfaz.onrender.com`. Para permitir el origen publicado y la prueba local, sepáralos con una coma. Después de cambiar esta variable, vuelve a desplegar la API.
 
@@ -47,3 +56,5 @@ La prioridad se asigna por la API, no por el navegador: juguetes, útiles escola
 En el panel administrativo, la pestaña «En cola» presenta las donaciones por prioridad (número más alto primero) y conserva el orden de llegada cuando la prioridad coincide. Al pulsar «Enviar», la API marca la donación como enviada, la quita de la cola y la conserva en «Enviadas».
 
 No agregues contraseñas, `DATABASE_URL` ni claves secretas a `config.js`.
+
+Para validar el build, ejecuta `py -m unittest discover -s tests`.
