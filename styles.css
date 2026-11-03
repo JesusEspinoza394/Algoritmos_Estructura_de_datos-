@@ -957,12 +957,12 @@ a {
 }
 
 .app-register .story-content {
-  max-width: 360px;
+  max-width: 100%;
 }
 
 .app-register .story-content h1 {
-  max-width: 330px;
-  font-size: clamp(36px, 3.8vw, 48px);
+  max-width: 480px;
+  font-size: clamp(32px, 3.3vw, 48px);
   line-height: 1.08;
   letter-spacing: -1.4px;
 }
@@ -2865,7 +2865,7 @@ a {
 
 .app-home .story-content,
 .app-login .story-content {
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   margin: 0;
 }
 
@@ -3018,6 +3018,7 @@ a {
   .app-home .story-content,
   .app-login .story-content,
   .app-register .story-content {
+    flex: 0 1 auto;
     margin: 16px 0 0;
   }
 
