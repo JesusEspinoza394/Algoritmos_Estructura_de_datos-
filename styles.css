@@ -442,9 +442,9 @@ a {
 }
 
 .app-home .story-content h1 {
-  font-size: clamp(40px, 4.2vw, 50px);
-  line-height: 1.03;
-  letter-spacing: -2.9px;
+  font-size: clamp(36px, 4vw, 50px);
+  line-height: 1.08;
+  letter-spacing: -1.5px;
 }
 
 .app-home .story-content h1 span {
@@ -452,11 +452,11 @@ a {
 }
 
 .app-home .story-copy {
-  max-width: 460px;
-  margin-top: 22px;
+  max-width: 430px;
+  margin-top: 20px;
   color: #b7d5c9;
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 15px;
+  line-height: 1.65;
 }
 
 .app-home .story-slogan {
@@ -465,7 +465,7 @@ a {
   gap: 9px;
   margin: 20px 0 0;
   color: #d7eee4;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -498,8 +498,9 @@ a {
 }
 
 .app-home .form-heading h2 {
-  font-size: clamp(27px, 3vw, 32px);
-  letter-spacing: -1.4px;
+  font-size: clamp(26px, 2.5vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.8px;
 }
 
 .app-home .form-heading h2::after {
@@ -507,7 +508,8 @@ a {
 }
 
 .app-home .form-heading > p:last-child {
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .app-home .role-options {
@@ -564,12 +566,12 @@ a {
 
 .app-home .home-role-card .role-copy strong {
   margin: 2px 0 6px;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .app-home .home-role-card .role-copy > span:not(.role-action) {
-  font-size: 11px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .app-home .home-role-card .role-action {
@@ -578,7 +580,7 @@ a {
   gap: 5px;
   margin-top: 9px;
   color: #078b67;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -680,9 +682,9 @@ a {
 }
 
 .app-login .story-content h1 {
-  font-size: clamp(40px, 4vw, 53px);
-  line-height: 1.04;
-  letter-spacing: -2.6px;
+  font-size: clamp(36px, 4vw, 50px);
+  line-height: 1.08;
+  letter-spacing: -1.5px;
 }
 
 .app-login .story-content h1 span {
@@ -735,7 +737,7 @@ a {
 }
 
 .app-login .form-wrap {
-  width: min(100%, 430px);
+  width: min(100%, 460px);
   padding: 0;
 }
 
@@ -753,7 +755,8 @@ a {
   margin-bottom: 0;
   color: #10233b;
   font-size: clamp(27px, 3vw, 32px);
-  letter-spacing: -1.2px;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
 }
 
 .app-login .auth-login-heading h2 span {
@@ -770,7 +773,8 @@ a {
 .app-login .auth-login-heading p {
   margin-top: 10px;
   color: #64748b;
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .app-login .form-fields {
@@ -783,7 +787,7 @@ a {
 
 .app-login .field label {
   color: #24364e;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -822,7 +826,7 @@ a {
   color: #19312b;
   background: transparent;
   box-shadow: none;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .app-login .login-input-wrap input:focus {
@@ -890,7 +894,7 @@ a {
   border-radius: 9px;
   background: #087253;
   box-shadow: 0 7px 14px rgb(5 105 75 / 20%);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .app-login .login-submit:hover {
@@ -958,7 +962,9 @@ a {
 
 .app-register .story-content h1 {
   max-width: 330px;
-  font-size: clamp(38px, 4vw, 48px);
+  font-size: clamp(36px, 3.8vw, 48px);
+  line-height: 1.08;
+  letter-spacing: -1.4px;
 }
 
 .app-register .story-panel .brand-name {
@@ -981,7 +987,7 @@ a {
 }
 
 .app-register .form-wrap {
-  width: min(100%, 360px);
+  width: min(100%, 440px);
 }
 
 .app-register .back-link {
@@ -998,7 +1004,8 @@ a {
   margin: 0;
   color: #10233b;
   font-size: 23px;
-  letter-spacing: -0.8px;
+  line-height: 1.2;
+  letter-spacing: -0.6px;
 }
 
 .app-register .register-heading h2::before {
@@ -1021,7 +1028,8 @@ a {
 
 .app-register .register-heading p {
   color: #64748b;
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .app-register .register-card {
@@ -1042,7 +1050,7 @@ a {
 
 .app-register .field label {
   color: #24364e;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.15px;
   text-transform: uppercase;
@@ -1050,7 +1058,7 @@ a {
 
 .app-register .register-input-wrap {
   display: flex;
-  min-height: 35px;
+  min-height: 42px;
   align-items: center;
   gap: 9px;
   padding: 0 10px;
@@ -1074,7 +1082,7 @@ a {
 
 .app-register .register-input-wrap input {
   min-width: 0;
-  min-height: 32px;
+  min-height: 39px;
   flex: 1;
   padding: 0;
   border: 0;
@@ -1082,7 +1090,7 @@ a {
   color: #19312b;
   background: transparent;
   box-shadow: none;
-  font-size: 10px;
+  font-size: 13px;
 }
 
 .app-register .register-input-wrap input:focus {
@@ -1113,12 +1121,12 @@ a {
 
 .app-register .register-submit {
   width: 100%;
-  min-height: 40px;
+  min-height: 44px;
   margin-top: 5px;
   border-radius: 9px;
   background: #1d7057;
   box-shadow: 0 7px 14px rgb(5 105 75 / 20%);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .app-register .register-submit:hover {
@@ -1133,7 +1141,7 @@ a {
 .app-register .register-prompt {
   margin-top: 24px;
   color: #64748b;
-  font-size: 10px;
+  font-size: 13px;
 }
 
 .app-register .inline-link {
@@ -2839,8 +2847,8 @@ a {
 .app-login .story-panel,
 .app-register .story-panel {
   display: flex;
-  min-height: 100vh;
-  min-height: 100svh;
+  min-height: max(100vh, 720px);
+  min-height: max(100svh, 720px);
 }
 
 .app-home .story-panel {
@@ -2863,7 +2871,9 @@ a {
 
 .app-home .story-content h1,
 .app-login .story-content h1 {
-  font-size: clamp(38px, 4.2vw, 53px);
+  font-size: clamp(34px, 3.8vw, 48px);
+  line-height: 1.08;
+  letter-spacing: -1.5px;
 }
 
 .app-login .story-copy {
@@ -2879,8 +2889,8 @@ a {
 .app-home .form-panel,
 .app-login .form-panel,
 .app-register .form-panel {
-  min-height: 100vh;
-  min-height: 100svh;
+  min-height: max(100vh, 720px);
+  min-height: max(100svh, 720px);
   padding: 36px clamp(28px, 5vw, 72px);
 }
 
@@ -3021,7 +3031,7 @@ a {
   .app-home .story-copy,
   .app-login .story-copy {
     margin-top: 12px;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .app-register .story-copy {
@@ -3031,7 +3041,7 @@ a {
   .app-home .story-slogan,
   .app-login .story-slogan {
     margin-top: 13px;
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .app-home .form-panel,
@@ -3085,6 +3095,18 @@ a {
 
   .app-register .form-fields {
     gap: 10px;
+  }
+
+  .app-register .field label {
+    font-size: 10px;
+  }
+
+  .app-register .register-input-wrap {
+    min-height: 40px;
+  }
+
+  .app-register .register-input-wrap input {
+    min-height: 37px;
   }
 
   .app-register .register-prompt {

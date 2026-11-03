@@ -16,8 +16,10 @@ Abre `http://127.0.0.1:8000/login-cuenta` en el navegador. El servidor local per
 
 - `/login-cuenta`: selección entre usuario y administrador.
 - `/login-usuario`: inicio de sesión de usuario con correo y contraseña.
+- `/login-administrador`: acceso alternativo al inicio de sesión de administrador.
 - `/registrame-usuario`: registro con nombre, correo, edad y contraseña.
 - `/registrarse`: acceso alternativo al formulario de registro.
+- `/registrarme-ususario`: acceso alternativo al formulario de registro.
 - `/login-admin`: inicio de sesión de administrador con correo y contraseña.
 - `/formulario-donacion-usuario`: formulario protegido para registrar una donación.
 - `/gracias-por-donar`: confirmación de una donación guardada.

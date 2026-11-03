@@ -343,7 +343,11 @@ const pages = {
 
 function currentRoute() {
   const route = window.location.pathname.replace(/\/+$/, "") || "/login-cuenta";
-  return route === "/registrarse" ? "/registrame-usuario" : route;
+  return {
+    "/login-administrador": "/login-admin",
+    "/registrarse": "/registrame-usuario",
+    "/registrarme-ususario": "/registrame-usuario",
+  }[route] || route;
 }
 
 function render() {
