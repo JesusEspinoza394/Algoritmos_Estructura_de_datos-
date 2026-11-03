@@ -2265,42 +2265,27 @@ a {
   transform: none;
 }
 
-.admin-portal .queue-suggestions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 7px;
-  margin-top: 11px;
-  color: #61758a;
-  font-size: 9px;
+.admin-portal .user-donation-result {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #dceee4;
+  border-radius: 8px;
+  color: #536b80;
+  background: #f5fbf7;
+  font-size: 10px;
+  line-height: 1.5;
 }
 
-.admin-portal .queue-suggestions [data-search-suggestions] {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+.admin-portal .user-donation-result p {
+  margin: 0;
 }
 
-.admin-portal .suggestion-chip {
-  min-height: 25px;
-  padding: 0 9px;
-  border: 1px solid #bdf2d8;
-  border-radius: 999px;
-  color: #087c56;
-  background: #effbf6;
-  cursor: pointer;
-  font: inherit;
-  font-size: 9px;
+.admin-portal .user-donation-result p + p {
+  margin-top: 4px;
 }
 
-.admin-portal .suggestion-chip:hover,
-.admin-portal .suggestion-chip:focus-visible {
-  border-color: #16835d;
-  background: #d9f9e9;
-}
-
-.admin-portal .suggestion-empty {
-  color: #71859b;
+.admin-portal .user-donation-result .send-donation-button {
+  margin-top: 9px;
 }
 
 .admin-portal .result-count {
@@ -2830,39 +2815,73 @@ a {
   }
 }
 
+.page-shell.app-home,
+.page-shell.app-login,
+.page-shell.app-register {
+  display: grid;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.page-shell.app-home {
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+}
+
+.page-shell.app-login {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.page-shell.app-register {
+  grid-template-columns: minmax(0, 7fr) minmax(0, 9fr);
+}
+
 .app-home .story-panel,
-.app-login .story-panel {
+.app-login .story-panel,
+.app-register .story-panel {
   display: flex;
-  min-height: 300px;
-  padding: 28px 24px 34px;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.app-home .story-panel {
+  padding: 52px clamp(32px, 6.25vw, 76px);
+}
+
+.app-login .story-panel {
+  padding: 28px clamp(32px, 4.8vw, 72px) 36px;
+}
+
+.app-register .story-panel {
+  padding: 42px clamp(30px, 5vw, 72px) 32px;
 }
 
 .app-home .story-content,
 .app-login .story-content {
   flex: 0 1 auto;
-  margin: 40px 0 0;
+  margin: 0;
 }
 
 .app-home .story-content h1,
 .app-login .story-content h1 {
-  font-size: clamp(32px, 8vw, 44px);
+  font-size: clamp(38px, 4.2vw, 53px);
 }
 
 .app-login .story-copy {
-  margin-top: 12px;
-  font-size: 12px;
+  margin-top: 18px;
+  font-size: 14px;
 }
 
 .app-login .story-slogan {
-  margin-top: 13px;
-  font-size: 11px;
+  margin-top: 20px;
+  font-size: 12px;
 }
 
 .app-home .form-panel,
-.app-login .form-panel {
-  min-height: auto;
-  align-items: start;
-  padding: 34px 24px 48px;
+.app-login .form-panel,
+.app-register .form-panel {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 36px clamp(28px, 5vw, 72px);
 }
 
 .app-home .form-wrap,
@@ -2872,8 +2891,14 @@ a {
   padding: 0;
 }
 
+.app-register .form-wrap {
+  width: min(100%, 440px);
+  margin: 0 auto;
+  padding: 0;
+}
+
 .app-home .role-card {
-  padding: 18px;
+  padding: 20px;
 }
 
 .app-home .form-heading {
@@ -2881,7 +2906,220 @@ a {
 }
 
 .app-login .back-link {
-  margin-bottom: 20px;
+  margin-bottom: 27px;
+}
+
+.donation-portal {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100svh;
+  flex-direction: column;
+}
+
+.donation-portal .portal-content {
+  display: flex;
+  width: min(100% - 48px, 900px);
+  max-width: 900px;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: 22px 0 30px;
+}
+
+.donation-portal .portal-intro {
+  margin-bottom: 14px;
+}
+
+.donation-portal .donation-card {
+  width: 100%;
+  padding: 22px clamp(20px, 3vw, 32px);
+}
+
+.donation-portal .donation-fields {
+  gap: 12px;
+}
+
+.donation-portal .donation-fields .field label {
+  font-size: 11px;
+}
+
+.donation-portal .donation-fields input,
+.donation-portal .donation-fields select {
+  min-height: 42px;
+  font-size: 12px;
+}
+
+.donation-portal .donation-fields textarea {
+  min-height: 76px;
+  font-size: 12px;
+}
+
+.donation-portal .donation-fields .field-hint {
+  font-size: 10px;
+}
+
+.donation-portal .donation-fields .submit-button {
+  min-height: 44px;
+  font-size: 12px;
+}
+
+@media (max-width: 850px) {
+  .page-shell.app-home,
+  .page-shell.app-login,
+  .page-shell.app-register {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .app-home .story-panel,
+  .app-login .story-panel,
+  .app-register .story-panel {
+    padding-right: 28px;
+    padding-left: 28px;
+  }
+
+  .app-home .form-panel,
+  .app-login .form-panel,
+  .app-register .form-panel {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+}
+
+@media (max-width: 680px) {
+  .page-shell.app-home,
+  .page-shell.app-login,
+  .page-shell.app-register {
+    display: block;
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+
+  .app-home .story-panel,
+  .app-login .story-panel,
+  .app-register .story-panel {
+    min-height: 0;
+    padding: 24px;
+  }
+
+  .app-register .story-panel {
+    padding: 18px 20px;
+  }
+
+  .app-home .story-content,
+  .app-login .story-content,
+  .app-register .story-content {
+    margin: 16px 0 0;
+  }
+
+  .app-home .story-content h1,
+  .app-login .story-content h1,
+  .app-register .story-content h1 {
+    font-size: clamp(32px, 9vw, 42px);
+  }
+
+  .app-register .story-copy,
+  .app-home .story-copy,
+  .app-login .story-copy {
+    margin-top: 12px;
+    font-size: 12px;
+  }
+
+  .app-register .story-copy {
+    display: none;
+  }
+
+  .app-home .story-slogan,
+  .app-login .story-slogan {
+    margin-top: 13px;
+    font-size: 11px;
+  }
+
+  .app-home .form-panel,
+  .app-login .form-panel,
+  .app-register .form-panel {
+    min-height: 0;
+    padding: 28px 20px 36px;
+  }
+
+  .app-register .form-panel {
+    padding: 22px 18px;
+  }
+
+  .app-home .form-wrap,
+  .app-login .form-wrap,
+  .app-register .form-wrap {
+    width: min(100%, 440px);
+  }
+
+  .app-home .form-heading {
+    margin-bottom: 18px;
+  }
+
+  .app-home .role-options {
+    gap: 10px;
+  }
+
+  .app-home .home-role-card {
+    min-height: 0;
+    padding: 16px;
+  }
+
+  .app-login .back-link,
+  .app-register .back-link {
+    margin-bottom: 18px;
+  }
+
+  .app-login .form-heading.compact,
+  .app-register .form-heading.compact {
+    margin-bottom: 17px;
+  }
+
+  .app-login .form-fields,
+  .app-register .form-fields {
+    gap: 12px;
+  }
+
+  .app-register .register-card {
+    padding: 16px;
+  }
+
+  .app-register .form-fields {
+    gap: 10px;
+  }
+
+  .app-register .register-prompt {
+    margin-top: 14px;
+  }
+
+  .donation-portal .portal-content {
+    width: calc(100% - 28px);
+    padding: 14px 0 20px;
+  }
+
+  .donation-portal .portal-intro {
+    margin-bottom: 10px;
+  }
+
+  .donation-portal .portal-intro h1 {
+    font-size: clamp(23px, 6vw, 28px);
+  }
+
+  .donation-portal .donation-card {
+    padding: 15px;
+  }
+
+  .donation-portal .card-heading {
+    margin-bottom: 12px;
+    padding-bottom: 11px;
+  }
+
+  .donation-portal .donation-fields {
+    gap: 9px;
+  }
+
+  .donation-portal .donation-fields textarea {
+    min-height: 64px;
+  }
 }
 
 @media (max-width: 520px) {

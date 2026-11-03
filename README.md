@@ -17,6 +17,7 @@ Abre `http://127.0.0.1:8000/login-cuenta` en el navegador. El servidor local per
 - `/login-cuenta`: selección entre usuario y administrador.
 - `/login-usuario`: inicio de sesión de usuario con correo y contraseña.
 - `/registrame-usuario`: registro con nombre, correo, edad y contraseña.
+- `/registrarse`: acceso alternativo al formulario de registro.
 - `/login-admin`: inicio de sesión de administrador con correo y contraseña.
 - `/formulario-donacion-usuario`: formulario protegido para registrar una donación.
 - `/gracias-por-donar`: confirmación de una donación guardada.
@@ -55,7 +56,7 @@ El registro escribe usuarios en la base de Neon y devuelve un token de acceso; e
 
 La prioridad se asigna por la API, no por el navegador: juguetes, útiles escolares y otro reciben 1; higiene personal, 2; ropa y calzado, 3; alimentos, 4. No se muestra en el formulario ni en la confirmación del donante; el panel administrador muestra el nivel y ordena primero el número de prioridad más alto (4, luego 3, 2 y 1).
 
-En el panel administrativo, la pestaña «En cola» permite alternar entre «Desencolar» (prioridad mayor a menor) y «Encolar» (menor a mayor); los empates conservan el orden de llegada. Para enviar una donación, usa el buscador de la cola: acepta el tipo de objeto, ofrece hasta tres sugerencias aleatorias y localiza una coincidencia mediante búsqueda binaria antes de pedir a la API que la marque como enviada. La donación se quita de la cola y permanece en «Enviadas». «Albergues apoyados» cuenta los nombres únicos de albergues considerando todas las donaciones, por eso mantiene el mismo valor en ambas pestañas. Las vistas de usuario usan un diseño compacto y de una sola columna tanto en escritorio como en celular.
+En el panel administrativo, la pestaña «En cola» permite alternar entre «Desencolar» (prioridad mayor a menor) y «Encolar» (menor a mayor); los empates conservan el orden de llegada. El buscador acepta el ID del usuario, muestra cuántas donaciones ha registrado en total y permite enviar su donación pendiente de mayor prioridad. La donación se quita de la cola y permanece en «Enviadas». «Albergues apoyados» cuenta los nombres únicos de albergues considerando todas las donaciones, por eso mantiene el mismo valor en ambas pestañas. Las vistas de usuario usan un diseño compacto y de una sola columna tanto en escritorio como en celular.
 
 No agregues contraseñas, `DATABASE_URL` ni claves secretas a `config.js`.
 
