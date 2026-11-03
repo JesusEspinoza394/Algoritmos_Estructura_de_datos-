@@ -642,7 +642,7 @@ async function loadAdminDonations() {
       throw new Error("La API no devolvió una lista de donaciones válida.");
     }
     adminDonations = result.donations;
-    if (!Number.isInteger(result.unique_shelter_count) || result.unique_shelter_count < 0) {
+    if (!Number.isInteger(result.supported_shelter_count) || result.supported_shelter_count < 0) {
       throw new Error("La API no devolvió el total de albergues apoyados.");
     }
     if (!result.donation_counts_by_user || typeof result.donation_counts_by_user !== "object") {
@@ -650,7 +650,7 @@ async function loadAdminDonations() {
     }
     donationCountsByUser = result.donation_counts_by_user;
     app.querySelector("[data-total-count]").textContent = String(adminDonations.length);
-    app.querySelector("[data-shelter-count]").textContent = String(result.unique_shelter_count);
+    app.querySelector("[data-shelter-count]").textContent = String(result.supported_shelter_count);
     renderAdminDonations();
   } catch (error) {
     if (
