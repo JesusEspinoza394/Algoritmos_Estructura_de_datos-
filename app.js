@@ -92,7 +92,7 @@ function portalLayout({ name, email, role, content, tabs = "", className = "" })
 let adminDonations = [];
 let adminDonationStatus = "pending";
 let adminRequestId = 0;
-let queuePriorityOrder = "desc";
+let queuePriorityOrder = "highest-first";
 let donationCountsByUser = {};
 
 const pages = {
@@ -288,7 +288,7 @@ const pages = {
         <section class="portal-intro admin-intro">
           <p class="eyebrow">Panel de administración</p>
           <h1>${adminDonationStatus === "pending" ? 'Cola prioritaria <span aria-hidden="true">⚡</span>' : "Historial de enviadas"}</h1>
-          <p>${adminDonationStatus === "pending" ? "Alterna entre las prioridades más altas o más bajas; las donaciones con igual prioridad conservan su orden de llegada." : "Consulta las donaciones que ya fueron marcadas como enviadas."}</p>
+          <p>${adminDonationStatus === "pending" ? "La prioridad 1 es la más alta y la 4 la más baja. Las donaciones con igual prioridad conservan su orden de llegada." : "Consulta las donaciones que ya fueron marcadas como enviadas."}</p>
         </section>
         <section class="admin-summary" aria-label="Resumen de donaciones">
           <div class="summary-card"><span>${adminDonationStatus === "pending" ? "Donaciones en cola" : "Donaciones enviadas"}</span><strong data-total-count>—</strong></div>
@@ -301,7 +301,7 @@ const pages = {
               <span class="role-icon">${icons.box}</span>
               <div>
                 <h2 id="queue-search-title">Buscar donaciones de un usuario</h2>
-                <p>Busca por ID para ver cuántas donaciones ha registrado y enviar su pendiente de mayor prioridad.</p>
+                <p>Busca por ID para ver cuántas donaciones ha registrado y enviar su pendiente de mayor prioridad (número 1).</p>
               </div>
             </div>
             <form class="queue-search-form" data-form="queue-search">
@@ -322,11 +322,11 @@ const pages = {
             <span class="result-count" data-result-count></span>
             ${adminDonationStatus === "pending" ? `
               <div class="queue-order-controls" role="group" aria-label="Orden de prioridad">
-                <button class="queue-order-button ${queuePriorityOrder === "desc" ? "active" : ""}" type="button" data-queue-order="desc" aria-pressed="${queuePriorityOrder === "desc"}">
-                  Desencolar <span>Mayor a menor</span>
+                <button class="queue-order-button ${queuePriorityOrder === "highest-first" ? "active" : ""}" type="button" data-queue-order="highest-first" aria-pressed="${queuePriorityOrder === "highest-first"}">
+                  Desencolar <span>Mayor a menor (1 → 4)</span>
                 </button>
-                <button class="queue-order-button ${queuePriorityOrder === "asc" ? "active" : ""}" type="button" data-queue-order="asc" aria-pressed="${queuePriorityOrder === "asc"}">
-                  Encolar <span>Menor a mayor</span>
+                <button class="queue-order-button ${queuePriorityOrder === "lowest-first" ? "active" : ""}" type="button" data-queue-order="lowest-first" aria-pressed="${queuePriorityOrder === "lowest-first"}">
+                  Encolar <span>Menor a mayor (4 → 1)</span>
                 </button>
               </div>
             ` : ""}
@@ -524,7 +524,7 @@ app.addEventListener("submit", async (event) => {
     }
     summary.textContent = `El usuario con ID ${userId} ha registrado ${userDonationCount} ${userDonationCount === 1 ? "donación en total" : "donaciones en total"}; ${userDonations.length} ${userDonations.length === 1 ? "está pendiente" : "están pendientes"}.`;
     const highestPriorityDonation = userDonations.reduce(
-      (highest, donation) => !highest || donation.priority > highest.priority ? donation : highest,
+      (highest, donation) => !highest || donation.priority < highest.priority ? donation : highest,
       null,
     );
     if (highestPriorityDonation) {
@@ -697,7 +697,7 @@ function renderAdminDonations() {
   if (!list) return;
   const visibleDonations = adminDonationStatus === "pending"
     ? [...adminDonations].sort((left, right) =>
-      (queuePriorityOrder === "desc" ? right.priority - left.priority : left.priority - right.priority))
+      (queuePriorityOrder === "highest-first" ? left.priority - right.priority : right.priority - left.priority))
     : adminDonations;
   const countLabel = adminDonationStatus === "pending" ? "en cola" : "enviada";
   app.querySelector("[data-result-count]").textContent =
