@@ -323,10 +323,10 @@ const pages = {
             ${adminDonationStatus === "pending" ? `
               <div class="queue-order-controls" role="group" aria-label="Orden de prioridad">
                 <button class="queue-order-button ${queuePriorityOrder === "highest-first" ? "active" : ""}" type="button" data-queue-order="highest-first" aria-pressed="${queuePriorityOrder === "highest-first"}">
-                  Desencolar <span>Mayor a menor (1 → 4)</span>
+                  Ascendente <span>Mayor a menor (1 → 4)</span>
                 </button>
                 <button class="queue-order-button ${queuePriorityOrder === "lowest-first" ? "active" : ""}" type="button" data-queue-order="lowest-first" aria-pressed="${queuePriorityOrder === "lowest-first"}">
-                  Encolar <span>Menor a mayor (4 → 1)</span>
+                  Descendente <span>Menor a mayor (4 → 1)</span>
                 </button>
               </div>
             ` : ""}
